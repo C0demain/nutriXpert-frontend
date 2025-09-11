@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+.page-title{
+    @apply text-4xl mb-5 text-[#42b883]
+}
+
+.form-title{
+    @apply font-semibold text-xl mb-3
+}
