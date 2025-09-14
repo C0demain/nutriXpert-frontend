@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+.page-title{
+    @apply text-primary text-5xl mb-4
+}
+
+@theme {
+    --color-primary: #42B883;
+}
