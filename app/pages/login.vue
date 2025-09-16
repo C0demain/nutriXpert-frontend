@@ -5,7 +5,7 @@ const email = ref("")
 const password = ref("")
 
 const toast = useToast()
-const {setToken, token, isLoggedIn} = useAuthStore()
+const authStore = useAuthStore()
 
 interface LoginResponse{
     token: string
@@ -36,16 +36,16 @@ async function handleFormSubmit(event: SubmitEvent){
                 break
         }
     }else{
-        setToken(data.value?.token || '')
+        authStore.setToken(data.value?.token || '')
         toast.add({summary: 'Successo', detail: 'Login realizado com sucesso', severity: 'success', life: 4000})
-        navigateTo('/', {external: true})
+        navigateTo('/')
     }
     }
 
 </script>
 
 <template>
-    <form class="flex flex-col gap-4 p-4 rounded-lg border border-gray-200 max-w-3/6 mx-auto mt-50 h-full" @submit.prevent="handleFormSubmit">
+    <form class="flex flex-col gap-4 p-4 rounded-lg border border-gray-200 max-w-3/6 mx-auto mt-10 h-full" @submit.prevent="handleFormSubmit">
         <h1 class="page-title">Login</h1>
         <div class="flex flex-col gap-2"> 
             <label for="email">Email</label>

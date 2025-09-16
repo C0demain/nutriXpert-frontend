@@ -1,16 +1,16 @@
 <script setup lang="ts">
-const {isLoggedIn, logout} = useAuthStore()
+const authStore = useAuthStore()
 
 function handleLogout(){
-    logout()
-    navigateTo('/login', {external: true})
+    authStore.logout()
+    navigateTo('/login')
 }
 </script>
 
 <template>
   <div>
     <div class="flex justify-end w-10/12">
-        <Button v-if="isLoggedIn" outlined label="Logout" @click="handleLogout"/>
+        <Button v-if="authStore.isLoggedIn" outlined label="Logout" @click="handleLogout"/>
     </div>
     <slot /> 
   </div>

@@ -8,9 +8,11 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         logout(){
             useCookie('token').value = null
+            this.token = null
         },
         setToken(token: string){
             useCookie('token').value = token
+            this.token = token
         }
     },
 })
