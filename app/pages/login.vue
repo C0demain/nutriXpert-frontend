@@ -8,7 +8,8 @@ const toast = useToast()
 const authStore = useAuthStore()
 
 interface LoginResponse{
-    token: string
+    token: string,
+    id: string
 }
 
 async function handleFormSubmit(event: SubmitEvent){
@@ -37,6 +38,7 @@ async function handleFormSubmit(event: SubmitEvent){
         }
     }else{
         authStore.setToken(data.value?.token || '')
+        authStore.setUserId(data.value?.id || '')
         toast.add({summary: 'Successo', detail: 'Login realizado com sucesso', severity: 'success', life: 4000})
         navigateTo('/')
     }
