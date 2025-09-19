@@ -1,10 +1,10 @@
 export default defineNuxtPlugin((nuxtApp) => {
-    const { token, isLoggedIn } = useAuthStore()
+    const authStore = useAuthStore()
     const api = $fetch.create({
         baseURL: 'http://localhost:8080',
         onRequest({options}){
-            if(isLoggedIn){
-                options.headers.set('Authorization', `Bearer ${token}`)
+            if(authStore.isLoggedIn){
+                options.headers.set('Authorization', `Bearer ${authStore.token}`)
             }
         },
         onResponseError({response}){

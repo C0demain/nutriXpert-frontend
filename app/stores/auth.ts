@@ -11,7 +11,9 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         logout(){
             useCookie('token').value = null
+            useCookie('userId').value = null
             this.token = null
+            this.userId = null
         },
         setToken(token: string){
             useCookie('token').value = token
