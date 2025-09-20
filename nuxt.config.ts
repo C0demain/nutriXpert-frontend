@@ -22,5 +22,5 @@ export default defineNuxtConfig({
         preset: Aura
       }
     }
-  }
+  },
 })
