@@ -11,7 +11,7 @@
                 <Button outlined label="Logout" @click="handleLogout" icon="pi pi-sign-out" class="!mx-auto"/>
             </template>
         </Drawer>
-        <Button @click="visible = true" v-if="authStore.isLoggedIn" label="Menu" variant="text" class="mb-4" icon="pi pi-bars"/>
+        <Button @click="visible = true" v-if="authStore.isLoggedIn" variant="text" class="mb-4 !text-black dark:!text-white" icon="pi pi-bars" label="Menu"/>
 </template>
 
 <script setup>
