@@ -121,11 +121,11 @@ async function handleDelete() {
 
 <template>
   <div class="flex flex-col items-center justify-center min-h-[60vh]">
-    <h1 class="page-title mb-8 text-2xl font-bold text-center">Perfil do Usuário</h1>
     <form
-      class="w-full max-w-md bg-neutral-900 rounded-lg shadow-md p-8 flex flex-col gap-6"
-      @submit.prevent="handleSubmit"
+    class="w-full max-w-lg bg-neutral-100 rounded-lg shadow-md p-8 flex flex-col gap-6"
+    @submit.prevent="handleSubmit"
     >
+    <h1 class="page-title mb-8 text-2xl font-bold text-center">Perfil</h1>
       <div class="grid grid-cols-1 gap-4">
         <div class="flex flex-col gap-2">
           <label for="name" class="font-medium">Nome</label>
