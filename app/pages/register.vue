@@ -39,10 +39,10 @@ async function handleRegister(event: SubmitEvent){
 
 <template>
     <form
-        class="flex flex-col gap-4 p-4 rounded-lg border border-gray-200 max-w-3/6 mx-auto mt-10 h-full"
+        class="flex flex-col gap-4 p-4 rounded-lg border border-gray-200 lg:max-w-3/6 mx-auto mt-10 h-full"
         @submit.prevent="handleRegister"
     >
-        <h1 class="page-title">Cadastro de Usuário</h1>
+        <h1 class="page-title">Criar conta</h1>
 
         <div class="flex flex-col gap-2">
             <label for="name">Nome</label>

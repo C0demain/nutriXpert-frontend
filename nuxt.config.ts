@@ -19,7 +19,10 @@ export default defineNuxtConfig({
     autoImport: true,
     options: {
       theme: {
-        preset: Aura
+        preset: Aura,
+        options: {
+          darkModeSelector: 'none'
+        }
       }
     }
   },
