@@ -4,7 +4,7 @@
                 <div class="flex flex-col">
                     <NuxtLink to="" class="opacity-40 p-2 rounded-lg hover:text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 align-middle">Chat</NuxtLink>
                     <NuxtLink to="/anamnese" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 align-middle">Anamnese</NuxtLink>
-                    <NuxtLink to="" class="opacity-40 p-2 rounded-lg hover:text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 align-middle">Perfil</NuxtLink>
+                    <NuxtLink to="/profile" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 align-middle">Perfil</NuxtLink>
                 </div>
             </div>
             <template #footer>
