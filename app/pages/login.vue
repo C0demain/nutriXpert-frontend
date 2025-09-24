@@ -65,7 +65,16 @@ async function handleFormSubmit(event: SubmitEvent){
             />
         </div>
         <Button label="Entrar" type="submit" class="bg-red-600"/>
+
+        <RouterLink 
+            to="/register"
+            class="text-center mt-2 font-semibold"
+            style="color: #42b883;"
+        >
+            Criar nova conta
+        </RouterLink>
     </form>
+
 </template>
 
 <style module>
