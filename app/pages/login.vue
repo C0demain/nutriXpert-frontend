@@ -40,7 +40,7 @@ async function handleFormSubmit(event: SubmitEvent){
         authStore.setToken(data.value?.token || '')
         authStore.setUserId(data.value?.id || '')
         toast.add({summary: 'Successo', detail: 'Login realizado com sucesso', severity: 'success', life: 4000})
-        navigateTo('/')
+        navigateTo('/chat')
     }
     }
 
