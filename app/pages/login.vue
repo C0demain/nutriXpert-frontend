@@ -47,7 +47,7 @@ async function handleFormSubmit(event: SubmitEvent){
 </script>
 
 <template>
-    <form class="flex flex-col gap-4 p-4 rounded-lg border border-gray-200 max-w-3/6 mx-auto mt-10 h-full" @submit.prevent="handleFormSubmit">
+    <form class="flex flex-col gap-4 p-4 rounded-lg border border-gray-200 lg:max-w-3/6 mx-auto mt-10 h-full" @submit.prevent="handleFormSubmit">
         <h1 class="page-title">Login</h1>
         <div class="flex flex-col gap-2"> 
             <label for="email">Email</label>
@@ -65,7 +65,16 @@ async function handleFormSubmit(event: SubmitEvent){
             />
         </div>
         <Button label="Entrar" type="submit" class="bg-red-600"/>
+
+        <RouterLink 
+            to="/register"
+            class="text-center mt-2 font-semibold"
+            style="color: #42b883;"
+        >
+            Criar nova conta
+        </RouterLink>
     </form>
+
 </template>
 
 <style module>
