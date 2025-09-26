@@ -2,7 +2,7 @@
   <div class="flex flex-col h-full w-full shadow-xl overflow-hidden bg-white">
     <!-- Header / Navbar -->
     <header class="p-4 font-bold text-white bg-emerald-600">
-      Chat: {{ chatStore.selectedFirstMessage || 'Novo chat' }}
+      Chat
     </header>
 
     <!-- Chat messages -->
