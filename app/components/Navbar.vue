@@ -4,6 +4,7 @@
                 <div class="flex flex-col">
                     <NuxtLink to="" class="opacity-40 p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Chat</NuxtLink>
                     <NuxtLink to="/anamnese" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Anamnese</NuxtLink>
+                    <NuxtLink to="/goals" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Objetivos nutricionais</NuxtLink>
                     <NuxtLink to="/profile" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Perfil</NuxtLink>
                 </div>
             </div>
