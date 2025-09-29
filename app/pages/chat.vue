@@ -1,5 +1,5 @@
 <template @render>
-    <div class="flex h-full w-full">
+    <div class="flex h-10/12 w-full">
         <div class="w-1/5 h-full">
             <chat-list/>
         </div>

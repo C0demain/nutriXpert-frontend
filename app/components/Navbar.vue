@@ -1,18 +1,56 @@
 <template>
-    <Drawer v-model:visible="visible" header="Menu" v-if="authStore.isLoggedIn">
-            <div class="flex flex-col justify-between">
-                <div class="flex flex-col">
-                    <NuxtLink to="" class="opacity-40 p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Chat</NuxtLink>
-                    <NuxtLink to="/anamnese" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Anamnese</NuxtLink>
-                    <NuxtLink to="/goals" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Objetivos nutricionais</NuxtLink>
-                    <NuxtLink to="/profile" class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle">Perfil</NuxtLink>
-                </div>
-            </div>
-            <template #footer>
-                <Button outlined label="Logout" @click="handleLogout" icon="pi pi-sign-out" class="!mx-auto"/>
-            </template>
-        </Drawer>
-        <Button @click="visible = true" v-if="authStore.isLoggedIn" variant="text" class="mb-4 !text-black" icon="pi pi-bars" label="Menu"/>
+  <Drawer v-model:visible="visible" header="Menu" v-if="authStore.isLoggedIn">
+    <div class="flex flex-col justify-between">
+      <div class="flex flex-col">
+        <NuxtLink
+          to="/chat"
+          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          active-class="opacity-40"
+        >
+          Chat
+        </NuxtLink>
+        <NuxtLink
+          to="/anamnese"
+          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          active-class="opacity-40"
+        >
+          Anamnese
+        </NuxtLink>
+        <NuxtLink
+          to="/goals"
+          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          active-class="opacity-40"
+        >
+          Objetivos nutricionais
+        </NuxtLink>
+        <NuxtLink
+          to="/profile"
+          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          active-class="opacity-40"
+        >
+          Perfil
+        </NuxtLink>
+      </div>
+    </div>
+    <template #footer>
+      <Button
+        outlined
+        label="Logout"
+        @click="handleLogout"
+        icon="pi pi-sign-out"
+        class="!mx-auto"
+      />
+    </template>
+  </Drawer>
+
+  <Button
+    @click="visible = true"
+    v-if="authStore.isLoggedIn"
+    variant="text"
+    class="mb-4 !text-black"
+    icon="pi pi-bars"
+    label="Menu"
+  />
 </template>
 
 <script setup>
@@ -21,9 +59,9 @@ const toast = useToast()
 
 const authStore = useAuthStore()
 
-function handleLogout(){
-    authStore.logout()
-    toast.add({severity: 'info', summary: 'Você saiu'})
-    navigateTo('/login')
+function handleLogout() {
+  authStore.logout()
+  toast.add({ severity: 'info', summary: 'Você saiu' })
+  navigateTo('/login')
 }
 </script>
