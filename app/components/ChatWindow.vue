@@ -20,7 +20,7 @@
           :class="msg.author === 'user' 
             ? 'bg-emerald-500 text-white' 
             : 'bg-gray-200 text-gray-800'"
-          class="px-3 py-2 rounded-md max-w-xs break-words"
+          class="px-3 py-2 rounded-md max-w-lg break-words"
         >
           {{ msg.text }}
         </div>
