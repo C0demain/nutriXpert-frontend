@@ -84,17 +84,7 @@ const messages = ref<Message[]>([]);
 const newMessage = ref("");
 const chatWindow = ref<HTMLElement | null>(null);
 
-watch(
-  () => chatStore.selectedChatId,
-  (newId) => {
-    messages.value = [] // limpa sempre que muda o chat selecionado
-    const userId = authStore.userId
-    if (newId && userId) {
-      getMessages(newId, userId)
-    }
-  },
-  { immediate: true }
-)
+
 
 watchEffect(() => {
   // Isso força a atualização do header
@@ -199,6 +189,18 @@ const sendMessage = async () => {
     scrollToBottom()
   }
 }
+
+watch(
+  () => chatStore.selectedChatId,
+  (newId) => {
+    messages.value = [] // limpa sempre que muda o chat selecionado
+    const userId = authStore.userId
+    if (newId && userId) {
+      getMessages(newId, userId)
+    }
+  },
+  { immediate: true }
+)
 
 const scrollToBottom = () => {
   nextTick(() => {
