@@ -1,10 +1,33 @@
 <template>
-  <div class="flex flex-col h-full w-full shadow-xl overflow-hidden bg-white">
+  <div
+    class="flex flex-col shadow-xl w-full h-full overflow-hidden bg-white rounded-xl"
+  >
     <!-- Header / Navbar -->
-    <header class="p-4 font-bold text-white bg-emerald-600">Chat</header>
+    <header
+      class="p-4 font-bold text-white bg-gradient-to-br from-emerald-500 to-emerald-300"
+    >
+      Chat
+    </header>
+
+    <!-- Nenhum chat selecionado -->
+    <div
+      v-if="!chatStore.selectedChatId"
+      class="h-full flex flex-col items-center justify-center p-8 text-center"
+    >
+      <div
+        class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mb-6 text-4xl"
+      >
+        🌱
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-3">Bem-vindo ao NutriXpert</h2>
+      <p class="text-gray-500 mb-6 max-w-md">
+        Selecione uma conversa existente ou inicie uma nova para começar
+      </p>
+    </div>
 
     <!-- Chat messages -->
     <main
+      v-else
       ref="chatWindow"
       class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col"
     >
@@ -25,7 +48,9 @@
           v-html="marked.parse(msg.text)"
         ></div>
         <span class="text-xs text-gray-400 mt-1">
-          {{ new Date(msg.timestamp).toLocaleTimeString().substring(0, 5) }}
+          {{
+            timestampToDate(msg.timestamp).toLocaleTimeString().substring(0, 5)
+          }}
           {{ timestampToDate(msg.timestamp).toLocaleDateString() }}
         </span>
       </div>
@@ -33,32 +58,34 @@
 
     <!-- Input -->
     <form
+      v-if="chatStore.selectedChatId"
       @submit.prevent="sendMessage"
-      class="flex p-3 bg-gray-100 border-t border-gray-200"
+      class="flex gap-3 p-4 bg-white border-t border-gray-200 shadow-lg"
     >
       <input
         v-model="newMessage"
         type="text"
         placeholder="Digite sua mensagem..."
-        class="flex-1 border rounded-full px-3 py-2 mr-2 focus:outline-none focus:ring focus:ring-emerald-400 bg-white text-gray-800 placeholder-gray-400 text-sm"
+        class="flex-1 rounded-full px-3 py-2 border-2 border-gray-300 focus:outline-0 focus:border-emerald-300 bg-white text-gray-800 placeholder-gray-400 text-base transition-all"
       />
-      <button
+      <Button
+        icon="pi pi-arrow-up"
         type="submit"
-        class="bg-emerald-500 text-white px-4 py-2 rounded-full hover:bg-emerald-600 transition text-sm"
-      >
-        Enviar
-      </button>
+        class="bg-emerald-500 text-white hover:bg-emerald-600 transition"
+        :disabled="!newMessage.trim()"
+        rounded
+      />
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { bar } from "@primeuix/themes/aura/scrollpanel";
 import { marked } from "marked";
-import { useToast } from "primevue";
+import { ScrollPanel } from "primevue";
 import { v4 as uuidv4 } from "uuid";
 import { nextTick, onMounted, ref } from "vue";
-import { z } from "zod";
-import { timestampToDate } from "~/utils/functions";
+import { size, z } from "zod";
 
 export interface Message {
   id: string;

@@ -1,8 +1,8 @@
 <template>
-  <div class="w-11/12 mx-auto mt-6 h-screen">
-    <Toast position="bottom-right"/>
+  <div class="w-11/12 h-svh mx-auto">
+    <Toast position="bottom-right" />
     <NuxtLayout>
       <NuxtPage />
-    </NuxtLayout> 
+    </NuxtLayout>
   </div>
 </template>
