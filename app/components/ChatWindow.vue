@@ -58,6 +58,7 @@ import { useToast } from "primevue";
 import { v4 as uuidv4 } from "uuid";
 import { nextTick, onMounted, ref } from "vue";
 import { z } from "zod";
+import { timestampToDate } from "~/utils/functions";
 
 export interface Message {
   id: string;
