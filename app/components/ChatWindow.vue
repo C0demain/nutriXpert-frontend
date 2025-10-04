@@ -25,7 +25,8 @@
           v-html="marked.parse(msg.text)"
         ></div>
         <span class="text-xs text-gray-400 mt-1">
-          {{ msg.timestamp }}
+          {{ new Date(msg.timestamp).toLocaleTimeString().substring(0, 5) }}
+          {{ timestampToDate(msg.timestamp).toLocaleDateString() }}
         </span>
       </div>
     </main>
