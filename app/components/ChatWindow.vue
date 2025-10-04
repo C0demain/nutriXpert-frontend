@@ -15,15 +15,15 @@
         class="flex flex-col"
       >
         <div
-          :class="
+          :class="[
             msg.author === 'user'
               ? 'bg-emerald-500 text-white'
-              : 'bg-gray-200 text-gray-800'
-          "
+              : 'bg-gray-200 text-gray-800',
+            'markdown-content',
+          ]"
           class="px-3 py-2 rounded-md max-w-lg break-words"
-        >
-          {{ msg.text }}
-        </div>
+          v-html="marked.parse(msg.text)"
+        ></div>
         <span class="text-xs text-gray-400 mt-1">
           {{ new Date(msg.timestamp).toLocaleTimeString().substring(0, 5) }}
           {{ timestampToDate(msg.timestamp).toLocaleDateString() }}
@@ -53,9 +53,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from "vue";
+import { marked } from "marked";
+import { useToast } from "primevue";
 import { v4 as uuidv4 } from "uuid";
+import { nextTick, onMounted, ref } from "vue";
 import { z } from "zod";
+import { timestampToDate } from "~/utils/functions";
 
 export interface Message {
   id: string;
