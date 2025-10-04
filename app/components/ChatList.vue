@@ -1,79 +1,111 @@
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden">
     <!-- Header com botão Novo Chat -->
-    <header class="flex justify-between items-center p-4 text-emerald-600 font-bold">
-      <span>Conversas</span>
+    <header
+      class="flex justify-between items-center p-4 border-b border-emerald-100"
+    >
+      <h2 class="text-xl font-bold text-emerald-700">Conversas</h2>
       <button
         @click="newChat"
-        class="bg-emerald-600 text-white px-3 py-1 rounded-md hover:bg-emerald-700 transition text-sm font-semibold"
+        class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-all duration-200 text-sm font-semibold flex items-center gap-2"
       >
-        + Novo Chat
+        <i class="pi pi-plus text-sm"></i>
+        <span>Nova Conversa</span>
       </button>
     </header>
 
     <!-- Lista de conversas -->
-    <main class="flex-1 p-4 space-y-2 overflow-y-auto bg-gray-50">
+    <main class="flex-1 p-4 space-y-3 overflow-y-auto">
       <div
         v-for="chat in chats"
         :key="chat.session_id"
         @click="selectChat(chat.session_id, chat.first_message)"
-        class="p-3 rounded-lg border cursor-pointer hover:bg-emerald-50 transition
-               flex justify-between items-center
-               bg-white shadow-sm"
+        class="group px-4 py-2 rounded-xl border border-emerald-100 cursor-pointer hover:border-emerald-300 transition-all duration-200 flex justify-between items-center bg-white"
+        :class="{
+          'ring-2 ring-emerald-500 border-emerald-500':
+            chatStore.selectedChatId === chat.session_id,
+        }"
       >
-        <span class="text-gray-800 truncate">{{ chat.first_message }}</span>
-        <span class="text-xs text-gray-400">{{ chat.session_id.slice(0, 6) }}</span>
+        <div class="flex items-start gap-3 flex-1 min-w-0">
+          <div class="flex-1 min-w-0">
+            <p
+              class="text-gray-800 font-medium truncate first-letter:capitalize"
+            >
+              {{ chat.first_message }}
+            </p>
+            <span class="text-xs text-gray-400 font-mono mt-1 inline-block">
+              ID: {{ chat.session_id.slice(0, 8) }}
+            </span>
+          </div>
+        </div>
+        <i
+          class="pi pi-chevron-right text-gray-300 group-hover:text-emerald-600 transition-colors text-sm ml-2"
+        ></i>
       </div>
-      <div v-if="chats.length === 0" class="text-gray-400 text-center mt-4">
-        Nenhuma conversa encontrada
+
+      <!-- Estado vazio -->
+      <div
+        v-if="chats.length === 0"
+        class="flex flex-col items-center justify-center mt-16 text-center px-4"
+      >
+        <div
+          class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4"
+        >
+          <i class="pi pi-comments text-4xl text-emerald-600"></i>
+        </div>
+        <p class="text-gray-500 font-medium mb-2">Nenhuma conversa ainda</p>
+        <p class="text-gray-400 text-sm">
+          Clique em "Nova Conversa" para começar
+        </p>
       </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useAgentAPI } from '~/composables/useAgentAPI'
-import { useToast } from 'primevue/usetoast'
-import { useAuthStore } from '~/stores/auth'
-import { useChatStore } from '~/stores/chat'
+import { ref, watch } from "vue";
+import { useAgentAPI } from "~/composables/useAgentAPI";
+import { useToast } from "primevue/usetoast";
+import { useAuthStore } from "~/stores/auth";
+import { useChatStore } from "~/stores/chat";
 
 interface Chat {
   session_id: string;
   first_message: string;
 }
 
-type GetChatsResponse = Chat[]
+type GetChatsResponse = Chat[];
 
-const toast = useToast()
-const authStore = useAuthStore()
-const chatStore = useChatStore()
-const chats = ref<Chat[]>([])
+const toast = useToast();
+const authStore = useAuthStore();
+const chatStore = useChatStore();
+
+const chats = ref<Chat[]>([]);
 
 function selectChat(id: string, firstMessage: string) {
-  chatStore.selectChat(id, firstMessage)
+  chatStore.selectChat(id, firstMessage);
 }
 
 function newChat() {
-  chatStore.selectChat('', '') // limpa a conversa selecionada
+  chatStore.selectChat("", ""); // limpa a conversa selecionada
 }
 
 async function getChats(id?: string) {
-  if (!id) return // não redireciona aqui, apenas não busca
+  if (!id) return; // não redireciona aqui, apenas não busca
 
   const { data, error } = await useAgentAPI<GetChatsResponse>(`/${id}/list`, {
-    method: 'GET'
-  })
+    method: "GET",
+  });
 
   if (error.value) {
     toast.add({
-      summary: 'Falha ao carregar conversas',
-      detail: 'Algo deu errado, recarregue a página',
-      severity: 'error',
-      life: 4000
-    })
+      summary: "Falha ao carregar conversas",
+      detail: "Algo deu errado, recarregue a página",
+      severity: "error",
+      life: 4000,
+    });
   } else if (data.value) {
-    chats.value = data.value
+    chats.value = data.value;
   }
 }
 
@@ -82,19 +114,19 @@ watch(
   () => authStore.userId,
   (id) => {
     if (id) {
-      getChats(id)
+      getChats(id);
     }
   },
   { immediate: true }
-)
+);
 
 // observa criação de novo chat
 watch(
   () => chatStore.selectedChatId,
   (newId, oldId) => {
     if (newId && !oldId) {
-      getChats(authStore.userId ?? undefined)
+      getChats(authStore.userId ?? undefined);
     }
   }
-)
+);
 </script>
