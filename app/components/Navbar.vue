@@ -1,34 +1,38 @@
 <template>
   <Drawer v-model:visible="visible" header="Menu" v-if="authStore.isLoggedIn">
-    <div class="flex flex-col justify-between">
-      <div class="flex flex-col">
+    <div class="flex flex-col justify-between h-full">
+      <div class="flex flex-col gap-2">
         <NuxtLink
           to="/chat"
-          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          class="p-3 rounded-lg hover:text-primary hover:bg-zinc-100 flex items-center gap-3 transition-colors"
           active-class="opacity-40"
         >
-          Chat
+          <i class="pi pi-comments"></i>
+          <span>Chat</span>
         </NuxtLink>
         <NuxtLink
           to="/anamnese"
-          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          class="p-3 rounded-lg hover:text-primary hover:bg-zinc-100 flex items-center gap-3 transition-colors"
           active-class="opacity-40"
         >
-          Anamnese
+          <i class="pi pi-heart"></i>
+          <span>Anamnese</span>
         </NuxtLink>
         <NuxtLink
           to="/goals"
-          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          class="p-3 rounded-lg hover:text-primary hover:bg-zinc-100 flex items-center gap-3 transition-colors"
           active-class="opacity-40"
         >
-          Objetivos nutricionais
+          <i class="pi pi-flag"></i>
+          <span>Objetivos nutricionais</span>
         </NuxtLink>
         <NuxtLink
           to="/profile"
-          class="p-2 rounded-lg hover:text-primary hover:bg-zinc-100 align-middle"
+          class="p-3 rounded-lg hover:text-primary hover:bg-zinc-100 flex items-center gap-3 transition-colors"
           active-class="opacity-40"
         >
-          Perfil
+          <i class="pi pi-user"></i>
+          <span>Perfil</span>
         </NuxtLink>
       </div>
     </div>
@@ -38,11 +42,10 @@
         label="Logout"
         @click="handleLogout"
         icon="pi pi-sign-out"
-        class="!mx-auto"
+        class="w-full"
       />
     </template>
   </Drawer>
-
   <Button
     @click="visible = true"
     v-if="authStore.isLoggedIn"
@@ -54,14 +57,13 @@
 </template>
 
 <script setup>
-const visible = ref(false)
-const toast = useToast()
-
-const authStore = useAuthStore()
+const visible = ref(false);
+const toast = useToast();
+const authStore = useAuthStore();
 
 function handleLogout() {
-  authStore.logout()
-  toast.add({ severity: 'info', summary: 'Você saiu' })
-  navigateTo('/login')
+  authStore.logout();
+  toast.add({ severity: "info", summary: "Você saiu" });
+  navigateTo("/login");
 }
 </script>
