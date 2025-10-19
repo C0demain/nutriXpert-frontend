@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden">
-    <!-- Header com botão Novo Chat -->
+   
     <header
       class="flex justify-between items-center p-4 border-b border-emerald-100"
     >
@@ -14,7 +14,7 @@
       </button>
     </header>
 
-    <!-- Lista de conversas -->
+   
     <main class="flex-1 p-4 space-y-3 overflow-y-auto">
       <div
         v-for="chat in chats"
@@ -43,7 +43,7 @@
         ></i>
       </div>
 
-      <!-- Estado vazio -->
+      
       <div
         v-if="chats.length === 0"
         class="flex flex-col items-center justify-center mt-16 text-center px-4"
@@ -87,11 +87,21 @@ function selectChat(id: string, firstMessage: string) {
 }
 
 function newChat() {
-  chatStore.selectChat("", ""); // limpa a conversa selecionada
+ 
+  const newId = crypto.randomUUID();
+
+ 
+  chatStore.selectChat(newId, "");
+
+  
+  chats.value.unshift({
+    session_id: newId,
+    first_message: "Nova conversa",
+  });
 }
 
 async function getChats(id?: string) {
-  if (!id) return; // não redireciona aqui, apenas não busca
+  if (!id) return;
 
   const { data, error } = await useAgentAPI<GetChatsResponse>(`/${id}/list`, {
     method: "GET",
@@ -109,7 +119,7 @@ async function getChats(id?: string) {
   }
 }
 
-// observa quando o userId fica disponível
+
 watch(
   () => authStore.userId,
   (id) => {
@@ -120,10 +130,11 @@ watch(
   { immediate: true }
 );
 
-// observa criação de novo chat
+
 watch(
   () => chatStore.selectedChatId,
   (newId, oldId) => {
+   
     if (newId && !oldId) {
       getChats(authStore.userId ?? undefined);
     }
