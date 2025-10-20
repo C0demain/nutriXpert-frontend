@@ -138,6 +138,14 @@
           </div>
         </div>
       </Dialog>
+      <div v-if="isTyping" class="flex items-start space-x-2">
+        <div class="bg-gray-200 text-gray-800 px-3 py-2 rounded-md max-w-xs flex space-x-1">
+          <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></span>
+          <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+          <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+        </div>
+      </div>
+
     </main>
 
     <form
@@ -195,6 +203,7 @@ const chatStore = useChatStore();
 const authStore = useAuthStore();
 const messages = ref<Message[]>([]);
 const newMessage = ref("");
+const isTyping = ref(false);
 const chatWindow = ref<HTMLElement | null>(null);
 
 const feedbacks = ref<Record<string, boolean>>({});
@@ -348,10 +357,14 @@ const sendMessage = async () => {
 
   newMessage.value = "";
 
+  isTyping.value = true;
+
   const { data, error } = await useAgentAPI<{ answer: string }>("/run-agent", {
     method: "POST",
     body: payload,
   });
+
+   isTyping.value = false;
 
   if (error.value) {
     toast.add({
