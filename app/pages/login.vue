@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Password, useToast } from 'primevue'
+import type { Role } from '~/types/Role'
 
 const email = ref("")
 const password = ref("")
@@ -9,7 +10,8 @@ const authStore = useAuthStore()
 
 interface LoginResponse{
     token: string,
-    id: string
+    id: string,
+    role: Role
 }
 
 async function handleFormSubmit(event: SubmitEvent){
@@ -26,7 +28,7 @@ async function handleFormSubmit(event: SubmitEvent){
             case 500:
                 toast.add({summary: 'Falha no login', detail: 'Algo deu errado. Tente novamente', severity: 'error', life: 4000})
                 break
-                case 403:
+            case 403:
                 toast.add({summary: 'Falha no login', detail: 'Email ou senha incorretos. Tente novamente', severity: 'error', life: 4000})
                 break
             case 404:
@@ -39,6 +41,7 @@ async function handleFormSubmit(event: SubmitEvent){
     }else{
         authStore.setToken(data.value?.token || '')
         authStore.setUserId(data.value?.id || '')
+        authStore.setRole(data.value?.role || null)
         toast.add({summary: 'Successo', detail: 'Login realizado com sucesso', severity: 'success', life: 4000})
         navigateTo('/chat')
     }
