@@ -2,7 +2,10 @@
     <h1 class="page-title">Usuários</h1>
     <DataTable :value="users" v-if="!error" v-model:filters="filters" data-key="id" :loading="pending" :global-filter-fields="['name', 'email']" scrollable scroll-height="320px">
         <template #header>
-            <InputText v-model="filters['global'].value" placeholder="Procurar por nome ou email" fluid/>
+            <div class="flex gap-4">
+                <InputText v-model="filters['global'].value" placeholder="Procurar por nome ou email" fluid/>
+                <Button @click="() => refresh()">Atualizar</Button>
+            </div>
         </template>
         <Column field="name" header="Nome" sortable></Column>
         <Column field="email" header="Email"></Column>
