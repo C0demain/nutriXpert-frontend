@@ -1,7 +1,6 @@
 <template>
   <div class="h-full">
-    <Navbar/>
-    <h1>Admin only</h1>
+    <AdminNavbar/>
     <slot /> 
   </div>
 </template>
