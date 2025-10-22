@@ -1,7 +1,5 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-    const authStore = useAuthStore()
-
-    if(to.path.startsWith('/admin') && !authStore.isAdmin){
+    if(to.path.startsWith('/admin') && useCookie('role').value !== 'ADMIN'){
         return navigateTo('/chat', {redirectCode: 403 })
     }
 })

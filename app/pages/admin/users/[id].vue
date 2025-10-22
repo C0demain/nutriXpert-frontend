@@ -1,10 +1,10 @@
 <template>
     <div class="flex h-10/12 w-full">
         <div class="w-1/5 h-full">
-            <chat-list/>
+            <chat-list readonly :user-id="String($route.params.id)"/>
         </div>
         <div class="w-4/5 h-full">
-            <chat-window/>
+            <chat-window readonly :user-id="String($route.params.id)"/>
         </div>
     </div>
 </template>

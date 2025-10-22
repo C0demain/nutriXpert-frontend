@@ -58,7 +58,7 @@
 
     <!-- Input -->
     <form
-      v-if="chatStore.selectedChatId"
+      v-if="chatStore.selectedChatId && !props.readonly"
       @submit.prevent="sendMessage"
       class="flex gap-3 p-4 bg-white border-t border-gray-200 shadow-lg"
     >
@@ -86,6 +86,13 @@ import { ScrollPanel } from "primevue";
 import { v4 as uuidv4 } from "uuid";
 import { nextTick, onMounted, ref } from "vue";
 import { size, z } from "zod";
+
+interface ChatWindowProps{
+  readonly?: boolean,
+  userId?: string
+}
+
+const props = defineProps<ChatWindowProps>()
 
 export interface Message {
   id: string;
@@ -225,7 +232,8 @@ watch(
   () => chatStore.selectedChatId,
   (newId) => {
     messages.value = []; // limpa sempre que muda o chat selecionado
-    const userId = authStore.userId;
+    const userId = props.userId || authStore.userId;
+    console.log('new id', newId, "userId", userId)
     if (newId && userId) {
       getMessages(newId, userId);
     }

@@ -1,10 +1,10 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-    const authStore = useAuthStore()
-    if(to.path === '/login' && authStore.isLoggedIn){
-        return navigateTo('/')
+    console.log('auth', to)
+    if(to.path === '/login' && !!useCookie('token').value){
+        return navigateTo(useCookie('role').value === 'ADMIN' ? '/admin/users': '/')
     }
 
-    if(to.path !== '/login' && !authStore.isLoggedIn){
+    if(to.path !== '/login' && !useCookie('token').value){
         return navigateTo('/login')
     }
 })

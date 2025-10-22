@@ -1,11 +1,10 @@
 import { defineStore } from "pinia";
-import type { Role } from "~/types/Role";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         token: useCookie('token').value,
         userId: useCookie('userId').value,
-        role: useCookie('role').value as Role | null | undefined
+        role: useCookie('role').value
     }),
     getters: {
         isLoggedIn: (state) => !!state.token,
@@ -15,8 +14,10 @@ export const useAuthStore = defineStore('auth', {
         logout(){
             useCookie('token').value = null
             useCookie('userId').value = null
+            useCookie('role').value = null
             this.token = null
             this.userId = null
+            this.role = null
         },
         setToken(token: string){
             useCookie('token').value = token
@@ -26,7 +27,7 @@ export const useAuthStore = defineStore('auth', {
             useCookie('userId').value = userId
             this.userId = userId
         },
-        setRole(role: Role | undefined | null){
+        setRole(role: string){
             useCookie('role').value = role
             this.role = role
         }

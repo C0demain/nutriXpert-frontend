@@ -6,6 +6,7 @@
     >
       <h2 class="text-xl font-bold text-emerald-700">Conversas</h2>
       <button
+        v-if="!props.readonly"
         @click="newChat"
         class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-all duration-200 text-sm font-semibold flex items-center gap-2"
       >
@@ -63,6 +64,13 @@
 </template>
 
 <script setup lang="ts">
+interface ChatListProps{
+  readonly?: boolean
+  userId?: string
+}
+
+const props = defineProps<ChatListProps>()
+
 import { ref, watch } from "vue";
 import { useAgentAPI } from "~/composables/useAgentAPI";
 import { useToast } from "primevue/usetoast";
@@ -101,9 +109,11 @@ function newChat() {
 }
 
 async function getChats(id?: string) {
-  if (!id) return;
+  if (!id && !props.userId) return;
 
-  const { data, error } = await useAgentAPI<GetChatsResponse>(`/${id}/list`, {
+  
+
+  const { data, error } = await useAgentAPI<GetChatsResponse>(`/${props.userId || id}/list`, {
     method: "GET",
   });
 
