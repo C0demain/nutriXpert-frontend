@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Password, useToast } from 'primevue'
+import type { Role } from '~/types/Role'
 
 const email = ref("")
 const password = ref("")
@@ -9,7 +10,8 @@ const authStore = useAuthStore()
 
 interface LoginResponse {
     token: string,
-    id: string
+    id: string,
+    role: Role
 }
 
 async function handleFormSubmit(event: SubmitEvent) {
@@ -57,8 +59,10 @@ async function handleFormSubmit(event: SubmitEvent) {
                 break
         }
     } else {
+        console.log(data.value)
         authStore.setToken(data.value?.token || '')
         authStore.setUserId(data.value?.id || '')
+        authStore.setRole(String(data.value?.role || ''))
 
         toast.add({
             summary: 'Successo',
