@@ -7,8 +7,17 @@
                 <Button @click="() => refresh()">Atualizar</Button>
             </div>
         </template>
+        <Column field="id" header="Id" sortable></Column>
         <Column field="name" header="Nome" sortable></Column>
         <Column field="email" header="Email"></Column>
+        <Column header="Ações" field="id">
+            <template #body = {data}>
+                <NuxtLink :href="`/admin/users/${data.id}`" class="hover:text-primary">
+                    <i class="pi pi-comments"></i>
+                    Conversas
+                </NuxtLink>
+            </template>
+        </Column>
     </DataTable>
 </template>
 
