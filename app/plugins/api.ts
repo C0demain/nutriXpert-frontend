@@ -8,7 +8,8 @@ export default defineNuxtPlugin((nuxtApp) => {
             }
         },
         onResponseError({response}){
-            if(response.status === 401){
+            if(response.status === 401 || response.status === 403){
+                authStore.logout()
                 navigateTo('/login')
             }
         }
