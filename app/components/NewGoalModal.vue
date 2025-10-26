@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { goalTypeOpts } from '~/types/Goal'
+import { goalTypeOpts, type GoalTypeOps } from '~/types/Goal'
 
 const visible = defineModel<boolean>('visible')
 
@@ -9,7 +9,7 @@ const authStore = useAuthStore()
 const description = ref('')
 const targetWeight = ref(0)
 const targetCalories = ref(0)
-const goalType = ref('')
+const goalType = ref<GoalTypeOps | null>(null)
 
 async function handleSubmit() {
   // 🧩 Validações básicas
@@ -93,7 +93,7 @@ async function handleSubmit() {
     description.value = ''
     targetWeight.value = 0
     targetCalories.value = 0
-    goalType.value = ''
+    goalType.value = null
   }
 }
 </script>
@@ -105,7 +105,7 @@ async function handleSubmit() {
         <label for="goalType">Objetivo <span class="text-red-500">*</span></label>
         <Select
           v-model="goalType"
-          :options="goalTypeOpts"
+           :options="[...goalTypeOpts]"
           option-label="label"
           option-value="value"
           placeholder="Selecione um objetivo"
