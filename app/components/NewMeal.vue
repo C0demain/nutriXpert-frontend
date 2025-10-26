@@ -24,17 +24,17 @@ async function handleSubmit(){
             description: description.value,
             type: mealType.value,
             mealDateTime: mealDateTime.value,
-        }
+        },
     })
 
     if(error.value){
         toast.add({severity: 'error', summary: 'Erro ao adicionar refeição', detail: 'Algo deu errado. Tente novamente', life: 2500})
     }else{
         toast.add({severity: 'success', summary: 'Sucesso', detail: 'Refeição registrada com sucesso', life: 2500})
+        await refreshNuxtData('meals')
         description.value = '',
         mealDateTime.value = new Date()
         mealType.value = undefined
-        refreshNuxtData('meals')
     }
 }
 </script>

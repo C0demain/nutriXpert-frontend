@@ -35,7 +35,7 @@ async function deleteMeal(mealId: number){
         <NewMeal/>
     </div>
     <Accordion>
-        <AccordionPanel v-for="meal in meals" :key="meal.id" :value="meal.id">
+        <AccordionPanel v-for="meal in meals" :value="meal.id" :key="meal.id">
             <AccordionHeader class="flex justify-between items-center">
                 <div class="space-x-6 w-11/12">
                     <span class="text-sm">{{ formatDateString(meal.mealDateTime) }}</span>
@@ -44,7 +44,9 @@ async function deleteMeal(mealId: number){
                 </div>
                 <Button @click="async () => await deleteMeal(meal.id)" severity="danger" icon="pi pi-trash" :ariaUserId="meal.userId"/>
             </AccordionHeader>
-            <AccordionContent>
+            <AccordionContent v-if="meal">
+                <NewFood :mealId="meal.id"/>
+                <FoodList :mealId="meal.id"/>
             </AccordionContent>
         </AccordionPanel>
     </Accordion>

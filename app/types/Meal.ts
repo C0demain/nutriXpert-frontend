@@ -1,3 +1,5 @@
+import type { Food } from "~/types/Food"
+
 export interface CreateMeal{
     description: string
     mealDateTime: Date
@@ -9,7 +11,7 @@ export interface Meal{
     description: string
     mealDateTime: string
     type: MealType
-    food: any[]
+    foods: Food[]
     userId: string
     createdAt: Date
 }
