@@ -4,10 +4,10 @@ import type { Food } from '~/types/Food';
 const { mealId } = defineProps({ mealId: { required: true, type: Number } })
 const toast = useToast()
 
-const { data: foods, error, refresh } = await useAPI<Food[]>(`/api/v1/foods/meal/${mealId}`, { key: `${mealId}:foods` })
+const { data: foods, error, refresh } = await useAPI<Food[]>(`/foods/meal/${mealId}`, { key: `${mealId}:foods` })
 
 async function deleteFood(mealId: number) {
-    const { error } = await useAPI(`/api/v1/foods/${mealId}`, { method: 'delete' })
+    const { error } = await useAPI(`/foods/${mealId}`, { method: 'delete' })
     if (error.value) {
         toast.add({
             summary: "Erro",

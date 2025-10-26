@@ -70,30 +70,32 @@ async function handleSubmit() {
     <Dialog v-model:visible="visible" modal header="Novo objetivo">
         <form class="flex flex-col gap-6" @submit.prevent="handleSubmit">
             <div class="flex flex-col gap-2">
+                <label for="goalType">Objetivo</label>
+                <Select v-model="goalType" :options="goalTypeOpts" option-label="label" option-value="value" placeholder="Selecione um objetivo"
+                    id="goalType" />
+            </div>
+
+            <div class="flex flex-col gap-2">
                 <label for="description">Descrição</label>
-                <InputText v-model="description" id="description" />
+                <InputText v-model="description" id="description" placeholder="Ex: Quero perder 5kg em 2 meses" />
             </div>
             <div class="flex gap-6">
                 <div class="flex flex-col gap-2">
                     <label for="targetWeight">Meta de peso</label>
                     <InputGroup>
-                        <InputNumber v-model="targetWeight" id="targetWeight" />
+                        <InputNumber v-model="targetWeight" id="targetWeight" placeholder="Ex: 70kg" />
                         <InputGroupAddon>Kg</InputGroupAddon>
                     </InputGroup>
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="targetCalories">Meta de calorias</label>
                     <InputGroup>
-                        <InputNumber v-model="targetCalories" id="targetCalories" />
+                        <InputNumber v-model="targetCalories" id="targetCalories" placeholder="Ex: 2000kcal" />
                         <InputGroupAddon>Kcal</InputGroupAddon>
                     </InputGroup>
                 </div>
             </div>
-            <div class="flex flex-col gap-2">
-                <label for="goalType">Descrição</label>
-                <Select v-model="goalType" :options="goalTypeOpts" option-label="label" option-value="value"
-                    id="goalType" />
-            </div>
+
             <div class="w-full flex gap-4">
                 <Button variant="outlined" class="flex-1" @click="visible = false">Cancelar</Button>
                 <Button type="submit" class="flex-2">Criar</Button>
