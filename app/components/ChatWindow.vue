@@ -251,6 +251,12 @@ const submitFeedback = async () => {
     });
     return;
   }
+};
+
+const timestampToDate = (timestamp: number) => new Date(timestamp);
+
+const getMessages = async (chatId: string, userId?: string) => {
+  if (!userId) navigateTo("/login");
 
   if (feedbackData.value.atendeu_expectativas === "") {
     toast.add({
