@@ -1,20 +1,18 @@
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden">
    
-    <header
-      class="flex justify-between items-center p-4 border-b border-emerald-100"
+  <header class="flex justify-between items-center p-4 border-b border-emerald-100 gap-8">
+    <h2 class="text-xl font-bold text-emerald-700">Conversas</h2>
+    <button
+      v-if="!props.readonly"
+      @click="newChat"
+      class="bg-emerald-500 text-white px-3 py-2 rounded-lg hover:bg-emerald-600 transition-all duration-200 text-sm font-semibold flex items-center gap-2"
     >
-      <h2 class="text-xl font-bold text-emerald-700">Conversas</h2>
-      <button
-        @click="newChat"
-        class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-all duration-200 text-sm font-semibold flex items-center gap-2"
-      >
-        <i class="pi pi-plus text-sm"></i>
-        <span>Nova Conversa</span>
-      </button>
-    </header>
+      <i class="pi pi-plus text-sm"></i>
+      <span>Nova Conversa</span>
+    </button>
+  </header>
 
-   
     <main class="flex-1 p-4 space-y-3 overflow-y-auto">
       <div
         v-for="chat in chats"
@@ -63,8 +61,14 @@
 </template>
 
 <script setup lang="ts">
+interface ChatListProps{
+  readonly?: boolean
+  userId?: string
+}
+
+const props = defineProps<ChatListProps>()
+
 import { ref, watch } from "vue";
-import { useAgentAPI } from "~/composables/useAgentAPI";
 import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "~/stores/auth";
 import { useChatStore } from "~/stores/chat";
@@ -101,9 +105,11 @@ function newChat() {
 }
 
 async function getChats(id?: string) {
-  if (!id) return;
+  if (!id && !props.userId) return;
 
-  const { data, error } = await useAgentAPI<GetChatsResponse>(`/${id}/list`, {
+  
+
+  const { data, error } = await useAPI<GetChatsResponse>(`/agent/${props.userId || id}/list`, {
     method: "GET",
   });
 

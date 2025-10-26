@@ -251,6 +251,12 @@ const submitFeedback = async () => {
     });
     return;
   }
+};
+
+const timestampToDate = (timestamp: number) => new Date(timestamp);
+
+const getMessages = async (chatId: string, userId?: string) => {
+  if (!userId) navigateTo("/login");
 
   if (feedbackData.value.atendeu_expectativas === "") {
     toast.add({
@@ -270,7 +276,7 @@ const submitFeedback = async () => {
     comentario: feedbackData.value.comentario,
   };
 
-  const { error } = await useAgentAPI("/feedback", {
+  const { error } = await useAPI("/agent/feedback", {
     method: "POST",
     body: payload,
   });
@@ -301,8 +307,8 @@ const getMessages = async (chatId: string, userId?: string) => {
   if (!userId) navigateTo("/login");
 
   if (chatId.length > 0) {
-    const { data, error } = await useAgentAPI<ChatSession>(
-      `/sessions/${userId}/${chatId}`,
+    const { data, error } = await useAPI<ChatSession>(
+      `/agent/sessions/${userId}/${chatId}`,
       { method: "GET" }
     );
 
@@ -360,7 +366,7 @@ const sendMessage = async () => {
 
   isTyping.value = true;
 
-  const { data, error } = await useAgentAPI<{ answer: string }>("/run-agent", {
+  const { data, error } = await useAPI<{ answer: string }>("/agent/run-agent", {
     method: "POST",
     body: payload,
   });
@@ -417,4 +423,3 @@ onMounted(() => {
   scrollToBottom();
 });
 </script>
-

@@ -85,12 +85,12 @@ async function handleSubmit(){
     if(error.value){
         switch (error.value.statusCode){
             case 500:
-                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente'})
+                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente', life: 3000})
             case 400:
-                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente'})
+                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente', life: 3000})
         }
     }else{
-        toast.add({severity: 'success', summary: 'Sucesso', detail: 'Anamnese enviada com sucesso'})
+        toast.add({severity: 'success', summary: 'Sucesso', detail: 'Anamnese enviada com sucesso', life: 3000})
     }
     
 }
