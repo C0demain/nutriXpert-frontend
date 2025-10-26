@@ -22,9 +22,19 @@ async function handleSubmit(){
     })
 
     if(error.value){
-        toast.add({severity: 'error', summary: 'Erro ao adicionar comida', detail: 'Algo deu errado. Tente novamente', life: 2500})
+        toast.add({
+            severity: 'error', 
+            summary: 'Erro ao adicionar comida', 
+            detail: 'Algo deu errado. Tente novamente', 
+            life: 2500
+        })
     }else{
-        toast.add({severity: 'success', summary: 'Sucesso', detail: 'Comida registrada com sucesso', life: 2500})
+        toast.add({
+            severity: 'success', 
+            summary: 'Sucesso', 
+            detail: 'Comida registrada com sucesso', 
+            life: 2500
+        })
         await refreshNuxtData(`${mealId}:foods`)
     }
 }

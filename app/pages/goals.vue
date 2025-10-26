@@ -8,7 +8,7 @@ const isModalVisible = ref(false)
 
 const {data: goals, error, pending} = await useAPI<Goal[]>(`/goals/user/${authStore.userId}`, {key: 'user-goals'})
 if(error.value){
-    toast.add({summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error'})
+    toast.add({summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error', life: 3000})
 }
 
 async function refresh(){
@@ -18,9 +18,9 @@ async function refresh(){
 async function deleteGoal(id: number){
     const {error} = await useAPI(`/goals/${id}`, {method: 'DELETE'})
     if(error.value){
-        toast.add({summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error'})
+        toast.add({summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error', life: 3000})
     }else{
-        toast.add({summary: "Sucesso", detail: "Objetivo excluído com sucesso", severity: 'success'})
+        toast.add({summary: "Sucesso", detail: "Objetivo excluído com sucesso", severity: 'success', life: 3000})
         await refresh()
     }
 }
