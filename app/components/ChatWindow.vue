@@ -353,6 +353,7 @@ const sendMessage = async () => {
     user_id: userId,
     session_id: sessionId,
     question: newMessage.value,
+    _ts: Date.now(), // evita cache e força nova requisição
   };
 
   newMessage.value = "";
