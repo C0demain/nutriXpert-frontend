@@ -6,21 +6,21 @@ const toast = useToast()
 
 const isModalVisible = ref(false)
 
-const {data: goals, error, pending} = await useAPI<Goal[]>(`/goals/user/${authStore.userId}`, {key: 'user-goals'})
-if(error.value){
-    toast.add({summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error', life: 3000})
+const { data: goals, error, pending } = await useAPI<Goal[]>(`/goals/user/${authStore.userId}`, { key: 'user-goals' })
+if (error.value) {
+    toast.add({ summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error', life: 3000 })
 }
 
-async function refresh(){
+async function refresh() {
     await refreshNuxtData(['user-goals'])
 }
 
-async function deleteGoal(id: number){
-    const {error} = await useAPI(`/goals/${id}`, {method: 'DELETE'})
-    if(error.value){
-        toast.add({summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error', life: 3000})
-    }else{
-        toast.add({summary: "Sucesso", detail: "Objetivo excluído com sucesso", severity: 'success', life: 3000})
+async function deleteGoal(id: number) {
+    const { error } = await useAPI(`/goals/${id}`, { method: 'DELETE' })
+    if (error.value) {
+        toast.add({ summary: "Erro", detail: "Não foi possível carregar seus objetivos nutricionais. Tente novamente mais tarde", severity: 'error', life: 3000 })
+    } else {
+        toast.add({ summary: "Sucesso", detail: "Objetivo excluído com sucesso", severity: 'success', life: 3000 })
         await refresh()
     }
 }
@@ -29,10 +29,12 @@ async function deleteGoal(id: number){
 
 <template>
     <h1 class="page-title">Objetivos nutricionais</h1>
-    <NewGoalModal v-model:visible="isModalVisible"/>
+    <NewGoalModal v-model:visible="isModalVisible" />
 
-    <Button class="w-full my-6" icon="pi pi-plus" label="Novo objetivo" @click="isModalVisible = true"/>
-    <ProgressSpinner v-if="pending"/>
+    <Button class="my-6 px-6 py-2 bg-emerald-500 text-white hover:bg-emerald-600 transition rounded-md shadow-md"
+        icon="pi pi-plus" label="Novo objetivo" @click="isModalVisible = true" />
+
+    <ProgressSpinner v-if="pending" />
     <div class="grid grid-cols-2 gap-6" v-else>
         <Panel :header="goal.description" class="w-full flex" v-for="goal in goals">
             <div class="flex w-full">
@@ -54,7 +56,7 @@ async function deleteGoal(id: number){
             <template #footer>
                 <div class="w-full flex justify-between">
                     <Badge severity="info" class="mt-auto">{{ goal.goalType }}</Badge>
-                    <Button icon="pi pi-trash" severity="danger" @click="deleteGoal(goal.id)"/>
+                    <Button icon="pi pi-trash" severity="danger" @click="deleteGoal(goal.id)" />
                 </div>
             </template>
         </Panel>
