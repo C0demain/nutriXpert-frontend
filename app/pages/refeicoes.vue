@@ -1,28 +1,3 @@
-<template>
-    <div class="sticky top-10 bg-white">
-        <h1 class="page-title">Refeições</h1>
-        <NewMeal/>
-        <div class="flex">
-            <div class="flex flex-col">
-                <label></label>
-            </div>
-        </div>
-    </div>
-    <Accordion>
-        <AccordionPanel v-for="meal in meals" :key="meal.id" :value="meal.id">
-            <AccordionHeader>
-                <div class="space-x-6">
-                    <span class="text-sm">{{ formatDateString(meal.mealDateTime) }}</span>
-                    <span>{{ meal.type }}</span>
-                    <span>{{ meal.description }}</span>
-                </div>
-            </AccordionHeader>
-            <AccordionContent>
-            </AccordionContent>
-        </AccordionPanel>
-    </Accordion>
-</template>
-
 <script setup lang="ts">
 import { AccordionPanel } from 'primevue'
 import type { Meal } from '~/types/Meal'
@@ -37,6 +12,40 @@ const {data: meals, refresh, error} = await useAPI<Meal[]>('/api/v1/meals', {
 })
 
 if(error.value){
-    toast.add({summary: "Erro", detail: "Não foi possível carregar suas refeições. Tente novamente mais tarde", severity: 'error'})
+    toast.add({summary: "Erro", detail: "Não foi possível carregar suas refeições. Tente novamente mais tarde", severity: 'error', life: 2500})
 }
+
+async function deleteMeal(mealId: number){
+    const {error} = await useAPI(`/api/v1/meals/${mealId}`, {method: 'delete'})
+    if(error.value){
+        toast.add({summary: "Erro", detail: "Não foi excluir essa refeição. Tente novamente mais tarde", severity: 'error', life: 2500})
+        return
+    }
+
+    toast.add({summary: 'Sucesso', detail: 'Refeição excluída com sucesso', severity: 'success', life: 2500})
+
+    await refresh()
+}
+
 </script>
+
+<template>
+    <div class="sticky top-10 bg-white">
+        <h1 class="page-title">Refeições</h1>
+        <NewMeal/>
+    </div>
+    <Accordion>
+        <AccordionPanel v-for="meal in meals" :key="meal.id" :value="meal.id">
+            <AccordionHeader class="flex justify-between items-center">
+                <div class="space-x-6 w-11/12">
+                    <span class="text-sm">{{ formatDateString(meal.mealDateTime) }}</span>
+                    <span>{{ translateMealType(meal.type) }}</span>
+                    <span>{{ meal.description }}</span>
+                </div>
+                <Button @click="async () => await deleteMeal(meal.id)" severity="danger" icon="pi pi-trash" :ariaUserId="meal.userId"/>
+            </AccordionHeader>
+            <AccordionContent>
+            </AccordionContent>
+        </AccordionPanel>
+    </Accordion>
+</template>
