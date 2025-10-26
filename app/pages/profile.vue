@@ -24,6 +24,7 @@ if (fetchError.value) {
     severity: "error",
     summary: "Erro",
     detail: "Não foi possível carregar os dados do usuário.",
+    life: 3000
   });
 }
 
@@ -43,6 +44,7 @@ async function handleSubmit() {
       severity: "warn",
       summary: "Atenção",
       detail: "As senhas não coincidem.",
+      life: 3000
     });
     return;
   }
@@ -62,12 +64,14 @@ async function handleSubmit() {
       severity: "error",
       summary: "Erro",
       detail: "Não foi possível atualizar os dados.",
+      life: 3000
     });
   } else {
     toast.add({
       severity: "success",
       summary: "Sucesso",
       detail: "Perfil atualizado com sucesso! Faça novamente o login com as novas informações.",
+      life: 3000
     });
     authStore.logout();
     router.push("/login");
@@ -95,12 +99,14 @@ async function handleDelete() {
           severity: "error",
           summary: "Erro",
           detail: "Não foi possível excluir a conta.",
+          life: 3000
         });
       } else {
         toast.add({
           severity: "success",
           summary: "Conta excluída",
           detail: "Sua conta foi excluída com sucesso.",
+          life: 3000
         });
         authStore.logout();
         router.push("/login");
@@ -112,6 +118,7 @@ async function handleDelete() {
         severity: "info",
         summary: "Cancelado",
         detail: "A exclusão foi cancelada.",
+        life: 3000
       });
     },
   });

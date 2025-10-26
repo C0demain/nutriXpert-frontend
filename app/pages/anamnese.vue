@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SelectButton } from 'primevue'
-import { AlcoholConsuptions, AllergyIntoleranceTypes, EvacuationFrequencies, GoalTypes, HealthConditions, Hydrations, NightAwakeningFrequencies, PhysicalActivityDurations, PhysicalActivityFrequencies, PhysicalActivityType, SleepQualities, StressLevels, SurgeryTypes, type AlcoholConsuption, type AllergyIntolerance, type Anamnese, type EvacuationFrequency, type GoalType, type HealthConditionType, type Hydration, type NightAwakeningFrequency, type PhysicalActivity, type PhysicalActivityDuration, type PhysicalActivityFrequency, type SleepQuality, type StressLevel, type Surgery } from '~/types/Anamnese'
-
+import { AlcoholConsuptions, AllergyIntoleranceTypes, EvacuationFrequencies, HealthConditions, Hydrations, NightAwakeningFrequencies, PhysicalActivityDurations, PhysicalActivityFrequencies, PhysicalActivityType, SleepQualities, StressLevels, SurgeryTypes, type AlcoholConsuption, type AllergyIntolerance, type Anamnese, type EvacuationFrequency, type HealthConditionType, type Hydration, type NightAwakeningFrequency, type PhysicalActivity, type PhysicalActivityDuration, type PhysicalActivityFrequency, type SleepQuality, type StressLevel, type Surgery } from '~/types/Anamnese'
+import { goalTypeOpts, type GoalTypeOps } from '~/types/Goal'
 
 const toast = useToast()
 const authStore = useAuthStore()
@@ -9,7 +9,7 @@ const authStore = useAuthStore()
 const activeStep = ref<string>("1")
 
 // Campos da anamnese
-const goalType = ref<GoalType>()
+const goalType = ref<GoalTypeOps>()
 const goalTypeOther = ref<string>("")
 const healthConditionType = ref<HealthConditionType>()
 const healthConditionOther = ref<string>("")
@@ -85,12 +85,12 @@ async function handleSubmit(){
     if(error.value){
         switch (error.value.statusCode){
             case 500:
-                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente'})
+                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente', life: 3000})
             case 400:
-                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente'})
+                toast.add({severity: 'error', summary: 'Erro ao enviar', detail: 'Algo deu errado. Tente novamente', life: 3000})
         }
     }else{
-        toast.add({severity: 'success', summary: 'Sucesso', detail: 'Anamnese enviada com sucesso'})
+        toast.add({severity: 'success', summary: 'Sucesso', detail: 'Anamnese enviada com sucesso', life: 3000})
     }
     
 }
@@ -110,7 +110,7 @@ async function handleSubmit(){
                 <StepPanel v-slot="{ activateCallback }" value="1" class="flex flex-col gap-6">
                     <div class="flex flex-col gap-2">
                         <label for="goalType">Qual seu principal objetivo?</label>
-                        <Select :options="GoalTypes.map(k => k)" id="goalType" v-model="goalType"/>
+                        <Select :options="goalTypeOpts" id="goalType" v-model="goalType" option-label="label" option-value="value" placeholder="Selecione um objetivo"/>
                     </div>
                     <div class="flex flex-col gap-2" v-if="false">
                         <label for="goalTypeOther">Especifique</label>

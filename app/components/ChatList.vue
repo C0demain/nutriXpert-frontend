@@ -69,7 +69,6 @@ interface ChatListProps{
 const props = defineProps<ChatListProps>()
 
 import { ref, watch } from "vue";
-import { useAgentAPI } from "~/composables/useAgentAPI";
 import { useToast } from "primevue/usetoast";
 import { useAuthStore } from "~/stores/auth";
 import { useChatStore } from "~/stores/chat";
@@ -110,7 +109,7 @@ async function getChats(id?: string) {
 
   
 
-  const { data, error } = await useAgentAPI<GetChatsResponse>(`/${props.userId || id}/list`, {
+  const { data, error } = await useAPI<GetChatsResponse>(`/agent/${props.userId || id}/list`, {
     method: "GET",
   });
 

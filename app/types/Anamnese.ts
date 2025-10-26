@@ -1,6 +1,8 @@
+import type { GoalTypeOps } from "./Goal"
+
 export interface Anamnese{
     id?: string
-    goalType: GoalType
+    goalType: GoalTypeOps
     goalTypeOther: string
     healthConditionType: HealthConditionType
     healthConditionOther: string
@@ -21,9 +23,6 @@ export interface Anamnese{
     hydration: Hydration
     continuousMedication: boolean
 }
-
-export const GoalTypes = ["Emagrecimento", "Ganho de massa muscular", "Controle de diabetes", "Reeducação alimentar", "Performance física e mental", "Ganho de peso", "Perda de gordura", "Manutenção do peso"] as const
-export type GoalType = typeof GoalTypes[number]
 
 export const HealthConditions = ["Diabetes tipo 1", "Diabetes tipo 2", "Hipertensão arterial", "Dislipidemia (colesterol, triglicerídeos)", "Doença renal", "Doença hepática", "Gastrite / refluxo", "Intestino preso / diarreia", "Osteoporose", "Doença cardiovascular (infarto, insuficiência cardíaca)", "Câncer", "Depressão / Ansiedade", "Doenças autoimunes", "Outro"] as const
 export type HealthConditionType = typeof HealthConditions[number]
