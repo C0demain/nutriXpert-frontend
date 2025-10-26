@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SelectButton } from 'primevue'
-import { AlcoholConsuptions, AllergyIntoleranceTypes, EvacuationFrequencies, GoalTypes, HealthConditions, Hydrations, NightAwakeningFrequencies, PhysicalActivityDurations, PhysicalActivityFrequencies, PhysicalActivityType, SleepQualities, StressLevels, SurgeryTypes, type AlcoholConsuption, type AllergyIntolerance, type Anamnese, type EvacuationFrequency, type GoalType, type HealthConditionType, type Hydration, type NightAwakeningFrequency, type PhysicalActivity, type PhysicalActivityDuration, type PhysicalActivityFrequency, type SleepQuality, type StressLevel, type Surgery } from '~/types/Anamnese'
-
+import { AlcoholConsuptions, AllergyIntoleranceTypes, EvacuationFrequencies, HealthConditions, Hydrations, NightAwakeningFrequencies, PhysicalActivityDurations, PhysicalActivityFrequencies, PhysicalActivityType, SleepQualities, StressLevels, SurgeryTypes, type AlcoholConsuption, type AllergyIntolerance, type Anamnese, type EvacuationFrequency, type GoalType, type HealthConditionType, type Hydration, type NightAwakeningFrequency, type PhysicalActivity, type PhysicalActivityDuration, type PhysicalActivityFrequency, type SleepQuality, type StressLevel, type Surgery } from '~/types/Anamnese'
+import { goalTypeOpts } from '~/types/Goal'
 
 const toast = useToast()
 const authStore = useAuthStore()
@@ -110,7 +110,7 @@ async function handleSubmit(){
                 <StepPanel v-slot="{ activateCallback }" value="1" class="flex flex-col gap-6">
                     <div class="flex flex-col gap-2">
                         <label for="goalType">Qual seu principal objetivo?</label>
-                        <Select :options="GoalTypes.map(k => k)" id="goalType" v-model="goalType"/>
+                        <Select :options="goalTypeOpts" id="goalType" v-model="goalType" option-label="label" option-value="value" placeholder="Selecione um objetivo"/>
                     </div>
                     <div class="flex flex-col gap-2" v-if="false">
                         <label for="goalTypeOther">Especifique</label>

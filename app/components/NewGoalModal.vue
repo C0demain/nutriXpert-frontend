@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { goalTypeOpts } from '~/types/Goal'
+
 const visible = defineModel<boolean>('visible')
 
 const toast = useToast()
@@ -8,13 +10,6 @@ const description = ref('')
 const targetWeight = ref(0)
 const targetCalories = ref(0)
 const goalType = ref('')
-const goalTypeOpts = [
-  { label: 'Perda de peso', value: 'WEIGHT_LOSS' },
-  { label: 'Ganho de peso', value: 'WEIGHT_GAIN' },
-  { label: 'Ganho de massa muscular', value: 'MUSCLE_GAIN' },
-  { label: 'Perda de gordura', value: 'FAT_LOSS' },
-  { label: 'Manutenção do peso', value: 'MAINTENANCE' }
-]
 
 async function handleSubmit() {
   // 🧩 Validações básicas
