@@ -32,6 +32,7 @@ async function deleteMeal(mealId: number){
 <template>
     <div class="sticky top-10 bg-white">
         <h1 class="page-title">Refeições</h1>
+        <h2 class="page-subtitle">Adicione e acompanhe suas refeições</h2>
         <NewMeal/>
     </div>
     <Accordion>

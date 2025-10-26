@@ -15,7 +15,7 @@
           class="p-3 rounded-lg hover:text-primary hover:bg-zinc-100 flex items-center gap-3 transition-colors"
           active-class="opacity-40"
         >
-          <i class="pi pi-comments"></i>
+          <i class="pi pi-calendar-times"></i>
           <span>Refeicoes</span>
         </NuxtLink>
         <NuxtLink

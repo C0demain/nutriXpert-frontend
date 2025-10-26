@@ -5,6 +5,10 @@
   @apply text-primary text-5xl mb-4;
 }
 
+.page-subtitle {
+  @apply text-black text-2xl mb-6 font-light;
+}
+
 @theme {
   --color-primary: #42b86f;
 }
