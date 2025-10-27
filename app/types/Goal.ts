@@ -1,30 +1,33 @@
 export type GoalTypeOps =
-  | 'WEIGHT_LOSS'
-  | 'MUSCLE_GAIN'
-  | 'DIABETES_CONTROL'
-  | 'NUTRITIONAL_REEDUCATION'
-  | 'PHYSICAL_MENTAL_PERFORMANCE'
-  | 'WEIGHT_GAIN'
-  | 'FAT_LOSS'
-  | 'MAINTENANCE'
+  | "Emagrecimento"
+  | "Ganho de massa muscular"
+  | "Controle de diabetes"
+  | "Reeducação alimentar"
+  | "Performance física e mental"
+  | "Ganho de peso"
+  | "Perda de gordura"
+  | "Manutenção do peso";
 
 export const goalTypeOpts = [
-  { label: 'Emagrecimento', value: 'WEIGHT_LOSS' },
-  { label: 'Ganho de massa muscular', value: 'MUSCLE_GAIN' },
-  { label: 'Controle de diabetes', value: 'DIABETES_CONTROL' },
-  { label: 'Reeducação alimentar', value: 'NUTRITIONAL_REEDUCATION' },
-  { label: 'Performance física e mental', value: 'PHYSICAL_MENTAL_PERFORMANCE' },
-  { label: 'Ganho de peso', value: 'WEIGHT_GAIN' },
-  { label: 'Perda de gordura', value: 'FAT_LOSS' },
-  { label: 'Manutenção do peso', value: 'MAINTENANCE' }
-]
+  { label: "Emagrecimento", value: "Emagrecimento" },
+  { label: "Ganho de massa muscular", value: "Ganho de massa muscular" },
+  { label: "Controle de diabetes", value: "Controle de diabetes" },
+  { label: "Reeducação alimentar", value: "Reeducação alimentar" },
+  {
+    label: "Performance física e mental",
+    value: "Performance física e mental",
+  },
+  { label: "Ganho de peso", value: "Ganho de peso" },
+  { label: "Perda de gordura", value: "Perda de gordura" },
+  { label: "Manutenção do peso", value: "Manutenção do peso" },
+];
 
 export interface Goal {
-  id: number
-  userId: string
-  description: string
-  goalType: GoalTypeOps
-  targetWeight: number
-  targetCalories: number
-  foodRestrictions: string
+  id: number;
+  userId: string;
+  description: string;
+  goalType: GoalTypeOps;
+  targetWeight: number;
+  targetCalories: number;
+  foodRestrictions: string;
 }
