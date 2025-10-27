@@ -1,9 +1,22 @@
-<script lang="ts" setup>
-import { Button } from 'primevue';
-</script>
-
 <template @render>
-    <h1 class="mx-auto text-4xl text-[#42b883]">Home</h1>
-    <p>Essa é a pagina Home</p>
-    <Button class="mt-4" @click="console.log('Esse botão é do PrimeVue')" label="Clique aqui"></Button>
+  <div class="min-h-screen flex flex-col justify-center items-center text-center">
+    <img src="~/assets/img/logotipo.png" alt="Logotipo" class="mb-6" />
+
+    <p class="text-2xl font-semibold">Sua assistente IA nutricional</p>
+    <p class="text-lg mb-8 text-gray-600">Clique em Criar conta para começar</p>
+
+    <div class="flex gap-8">
+      <NuxtLink 
+        to="/login" 
+        class="p-4 bg-neutral-100 text-xl rounded-lg font-bold shadow-md hover:shadow-lg transition-shadow duration-200">
+        Entrar
+      </NuxtLink>
+      
+      <NuxtLink 
+        to="/register" 
+        class="p-4 bg-primary text-white text-xl rounded-lg font-bold shadow-md hover:shadow-lg transition-shadow duration-200">
+        Criar conta
+      </NuxtLink>
+    </div>
+  </div>
 </template>

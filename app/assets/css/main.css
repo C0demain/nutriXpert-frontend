@@ -1,1 +1,27 @@
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
+
+.page-title {
+  @apply text-primary text-5xl mb-4;
+}
+
+.page-subtitle {
+  @apply text-black text-2xl mb-6 font-light;
+}
+
+@theme {
+  --color-primary: #42b86f;
+}
+
+/* Estilização do compeonente Markdown */
+.markdown-content h1 {
+  font-weight: bold;
+}
+.markdown-content h2 {
+  font-weight: bold;
+}
+.markdown-content ul,
+.markdown-content ol {
+  margin-left: 1.5em;
+  list-style-type: unset;
+}
