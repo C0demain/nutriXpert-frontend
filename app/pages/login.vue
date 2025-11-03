@@ -57,6 +57,14 @@ async function handleFormSubmit(event: SubmitEvent) {
                     life: 4000
                 })
                 break
+            case 401:
+                toast.add({
+                    summary: 'Falha no login',
+                    detail: 'Email ou senha incorretos. Tente novamente',
+                    severity: 'error',
+                    life: 4000
+                })
+                break
         }
     } else {
         console.log(data.value)
