@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col shadow-xl w-full h-full overflow-hidden bg-white rounded-xl">
+  <div class="flex flex-col shadow-xl w-full h-full overflow-hidden bg-white rounded-xl ml-5">
     <header class="p-4 font-bold text-white bg-gradient-to-br from-emerald-500 to-emerald-300">
       Chat
     </header>

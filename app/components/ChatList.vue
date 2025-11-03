@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden">
    
-  <header class="flex justify-between items-center p-4 border-b border-emerald-100 gap-8">
+  <header class="flex justify-between items-center p-0 border-b border-emerald-100 gap-8">
     <h2 class="text-xl font-bold text-emerald-700">Conversas</h2>
     <button
       v-if="!props.readonly"
