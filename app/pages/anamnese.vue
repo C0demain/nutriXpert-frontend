@@ -108,133 +108,163 @@ async function handleSubmit(){
             </StepList>
             <StepPanels>
                 <StepPanel v-slot="{ activateCallback }" value="1" class="flex flex-col gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label for="goalType">Qual seu principal objetivo?</label>
-                        <Select :options="goalTypeOpts" id="goalType" v-model="goalType" option-label="label" option-value="value" placeholder="Selecione um objetivo"/>
-                    </div>
-                    <div class="flex flex-col gap-2" v-if="false">
-                        <label for="goalTypeOther">Especifique</label>
-                        <InputText id="goalTypeOther" v-model="goalTypeOther"/>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label for="healthCondition">Você possui ou já teve alguma condição?</label>
-                        <Select :options="HealthConditions.map(v => v)" id="healthCondition" v-model="healthConditionType"/>
-                    </div>
-                    <div class="flex flex-col gap-2" v-if="healthConditionType === 'Outro'">
-                        <label for="healthConditionOther">Especifique sua condição</label>
-                        <InputText id="healthConditionOther" v-model="healthConditionOther"/>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label for="allergyIntoleranceType">Possui alguma alergia ou intolerância?</label>
-                        <Select :options="AllergyIntoleranceTypes.map(v => v)" id="allergyIntoleranceType" v-model="allergyIntoleranceType"/>
-                    </div>
-                    <div class="flex flex-col gap-2" v-if="allergyIntoleranceType === 'Outro'">
-                        <label for="allergyIntoleranceOther">Especifique sua alergia</label>
-                        <InputText id="allergyIntoleranceOther" v-model="allergyIntoleranceOther"/>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label for="surgeryType">Você já realizou alguma cirurgia?</label>
-                        <Select :options="SurgeryTypes.map(v => v)" id="surgeryType" v-model="surgeryType"/>
-                    </div>
-                    <div class="flex flex-col gap-2" v-if="surgeryType === 'Outro'">
-                        <label for="surgeryTypeOther">Especifique sua cirurgia</label>
-                        <InputText id="surgeryTypeOther" v-model="surgeryTypeOther"/>
-                    </div>
+                    <FormSelectField
+                    id="goalType"
+                    label="Qual seu principal objetivo?"
+                    placeholder="Selecione um objetivo"
+                    :options="goalTypeOpts"
+                    option-label="label"
+                    option-value="value"
+                    v-model="goalType"
+                    />
+                    
+                    <FormTextField
+                    id="goalTypeOther"
+                    label="Especifique"
+                    v-model="goalTypeOther"
+                    v-if="false"
+                    />
+                    
+                    <FormSelectField
+                    id="healthCondition"
+                    label="Você possui ou já teve alguma condição?"
+                    :options="HealthConditions.map(v => v)"
+                    v-model="healthConditionType"
+                    />
 
-                    <div class="flex flex-col gap-2">
-                        <label for="continuosMedication">Toma remédio controlado?</label>
-                        <div class="flex gap-2">
-                            <label>Não</label>
-                            <ToggleSwitch id="continuosMedication" v-model="continuousMedication"/>
-                            <label>Sim</label>
-                        </div>
-                    </div>
+                    <FormTextField
+                    id="healthConditionOther"
+                    label="Especifique sua condição"
+                    v-model="healthConditionOther"
+                    v-if="healthConditionType === 'Outro'"
+                    />
+                    
+                    <FormSelectField
+                    id="allergyIntoleranceType"
+                    label="Possui alguma alergia ou intolerância?"
+                    :options="AllergyIntoleranceTypes.map(v => v)"
+                    v-model="allergyIntoleranceType"
+                    />
+
+                    <FormTextField
+                    id="allergyIntoleranceOther"
+                    label="Especifique sua alergia"
+                    v-model="allergyIntoleranceOther"
+                    v-if="allergyIntoleranceType === 'Outro'"
+                    />
+
+                    <FormSelectField
+                    id="surgeryType"
+                    label="Você já realizou alguma cirurgia?"
+                    :options="SurgeryTypes.map(v => v)"
+                    v-model="surgeryType"
+                    />
+
+                    <FormTextField
+                    id="surgeryTypeOther"
+                    label="Especifique sua cirurgia"
+                    v-model="surgeryTypeOther"
+                    v-if="surgeryType === 'Outro'"
+                    />
+
+                    <FormSwitchField
+                    id="continuosMedication"
+                    label="Toma remédio controlado?"
+                    active-label="Sim"
+                    inactive-label="Não"
+                    v-model="continuousMedication"
+                    />
 
                     <Button class="w-fit self-end" label="Próximo" icon="pi pi-arrow-right" iconPos="right" @click="activateCallback('2')"/>
                 </StepPanel>
-            </StepPanels>
-            <StepPanel v-slot="{ activateCallback }" value="2" class="flex flex-col gap-6">
-                <div class="flex flex-col gap-2">
-                    <label for="physicalActivityType">Qual atividade mais te descreve?</label>
-                    <Select :options="PhysicalActivityType.map(v => v)" id="physicalActivityType" v-model="physicalActivityType"/>
-                </div>
-                <div class="flex flex-col gap-2" v-if="physicalActivityType === 'Outro'">
-                    <label for="physicalActivityOther">Especifique sua atividade</label>
-                    <InputText id="physicalActivityOther" v-model="physicalActivityOther"/>
-                </div>
-                <div class="flex flex-col gap-2" v-if="physicalActivityType !== 'Sedentário(a)' && physicalActivityType">
-                    <label>Com que frequência você pratica essa atividade?</label>
-                    <div class="space-x-2" v-for="frequency in PhysicalActivityFrequencies">
-                        <RadioButton v-model="physicalActivityFrequency" :value="frequency" :id="frequency"/>
-                        <label :for="frequency">{{ frequency }}</label>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-2" v-if="physicalActivityType !== 'Sedentário(a)' && physicalActivityType">
-                    <label>Qual a duração por dia dessa atividade?</label>
-                    <div class="space-x-2" v-for="duration in PhysicalActivityDurations">
-                        <RadioButton v-model="physicalActivityDuration" :value="duration" :id="duration"/>
-                        <label :for="duration">{{ duration }}</label>
-                    </div>
-                </div>
+                <StepPanel v-slot="{ activateCallback }" value="2" class="flex flex-col gap-6">
+                    <FormSelectField
+                    id="physicalActivityType"
+                label="Qual atividade mais te descreve?"
+                :options="PhysicalActivityType.map(v => v)"
+                v-model="physicalActivityType"
+                />
+                
+                <FormTextField
+                id="physicalActivityOther"
+                label="Especifique sua atividade"
+                v-model="physicalActivityOther"
+                v-if="physicalActivityType === 'Outro'"
+                />
+                
+                <FormRadioField
+                label="Com que frequência você pratica essa atividade?"
+                :options="PhysicalActivityFrequencies.map(v => v)"
+                v-model="physicalActivityFrequency"
+                v-if="physicalActivityType !== 'Sedentário(a)' && physicalActivityType"
+                />
+
+                <FormRadioField
+                label="Qual a duração por dia dessa atividade?"
+                :options="PhysicalActivityDurations.map(v => v)"
+                v-model="physicalActivityDuration"
+                v-if="physicalActivityType !== 'Sedentário(a)' && physicalActivityType"
+                />
+
                 <div class="flex justify-between">
                     <Button label="Anterior" severity="secondary" icon="pi pi-arrow-left" @click="activateCallback('1')" />
                     <Button label="Próximo" icon="pi pi-arrow-right" iconPos="right" @click="activateCallback('3')" />
                 </div>
             </StepPanel>
             <StepPanel v-slot="{ activateCallback }" value="3" class="flex flex-col gap-6">
-                <div class="flex flex-col gap-2">
-                    <label for="sleepQuality">Como você descreveria sua qualidade de sono?</label>
-                    <SelectButton :options="SleepQualities.map(v => v)" id="sleepQuality" v-model="sleepQuality"/>
-                </div>
+                <FormFlatSelectField
+                id="sleepQuality"
+                label="Como você descreveria sua qualidade de sono?"
+                :options="SleepQualities.map(v => v)"
+                v-model="sleepQuality"
+                />
                 
-                <div class="flex flex-col gap-2">
-                    <label for="nightAwakeningFrequency">Você costuma acordar durante a noite?</label>
-                    <SelectButton :options="NightAwakeningFrequencies.map(v => v)" id="nightAwakeningFrequency" v-model="nightAwakeningFrequency"/>
-                    </div>
-                    
-                <div class="flex flex-col gap-2">
-                    <label>Quantas vezes por semana você evacua?</label>
-                    <div class="space-x-2" v-for="frequencyEvac in EvacuationFrequencies">
-                        <RadioButton v-model="evacuationFrequencyType" :value="frequencyEvac" :id="frequencyEvac"/>
-                        <label :for="frequencyEvac">{{ frequencyEvac }}</label>
-                    </div>
-                </div>
+                <FormFlatSelectField
+                id="nightAwakeningFrequency"
+                label="Você costuma acordar durante a noite?"
+                :options="NightAwakeningFrequencies.map(v => v)"
+                v-model="nightAwakeningFrequency"
+                />
                 
-                <div class="flex flex-col gap-2">
-                    <label for="stressLevel">Como você descreveria seu nível de estresse diariamente?</label>
-                    <SelectButton :options="StressLevels.map(v => v)" id="stressLevel" v-model="stressLevel"/>
-                </div>
+                <FormRadioField
+                label="Quantas vezes por semana você evacua?"
+                :options="EvacuationFrequencies.map(v => v)"
+                v-model="evacuationFrequencyType"
+                />
                 
-                <div class="flex flex-col gap-2">
-                    <label>Você costuma beber?</label>
-                    <div class="space-x-2" v-for="consumo in AlcoholConsuptions">
-                        <RadioButton v-model="alcoholConsumption" :value="consumo" :id="consumo"/>
-                        <label :for="consumo">{{ consumo }}</label>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <label for="tabagism">Você fuma?</label>
-                    <div class="flex gap-2">
-                        <label>Não</label>
-                        <ToggleSwitch id="tabagism" v-model="tabagism"/>
-                        <label>Sim</label>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <label>Quantos litros de água você bebe por dia?</label>
-                    <div class="space-x-2" v-for="hydrationFreq in Hydrations">
-                        <RadioButton v-model="hydration" :value="hydrationFreq" :id="hydrationFreq"/>
-                        <label :for="hydrationFreq">{{ hydrationFreq }}</label>
-                    </div>
-                </div>
-
+                <FormFlatSelectField
+                id="stressLevel"
+                label="Como você descreveria seu nível de estresse diariamente?"
+                :options="StressLevels.map(v => v)"
+                v-model="stressLevel"
+                />
+                
+                <FormRadioField
+                label="Você costuma beber?"
+                :options="AlcoholConsuptions.map(v => v)"
+                v-model="alcoholConsumption"
+                />
+                
+                <FormSwitchField
+                id="tabagism"
+                label="Você fuma?"
+                active-label="Sim"
+                inactive-label="Não"
+                v-model="tabagism"
+                />
+                
+                <FormRadioField
+                label="Quantos litros de água você bebe por dia?"
+                :options="Hydrations.map(v => v)"
+                v-model="hydration"
+                />
+                
                 <div class="flex justify-between mb-10">
                     <Button label="Anterior" severity="secondary" icon="pi pi-arrow-left" @click="activateCallback('2')" />
                     <Button class="flex pt-6" type="submit">{{!!oldAnamnese ? "Atualizar" : "Enviar"}}</Button>
                 </div>
             </StepPanel>
+        </StepPanels>
         </Stepper>
 
     </form>
