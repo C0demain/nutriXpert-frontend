@@ -337,7 +337,7 @@ watch(
   { immediate: true }
 );
 
-const timestampToDate = (timestamp: number) => new Date(timestamp);
+const timestampToDate = (timestamp: number) => new Date(timestamp * 1000);
 
 const scrollToBottom = () => {
   nextTick(() => {
