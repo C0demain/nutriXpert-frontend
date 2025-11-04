@@ -1,14 +1,14 @@
 <template>
   <div class="flex flex-col h-full w-full overflow-hidden">
    
-  <header class="flex justify-between items-center p-4 border-b border-emerald-100 gap-8">
-    <h2 class="text-xl font-bold text-emerald-700">Conversas</h2>
+  <header class="flex flex-col justify-between items-center p-4 border-b border-emerald-100 gap-4">
+    <h2 class="text-2xl font-bold text-emerald-700">Conversas</h2>
     <button
       v-if="!props.readonly"
       @click="newChat"
-      class="bg-emerald-500 text-white px-3 py-2 rounded-lg hover:bg-emerald-600 transition-all duration-200 text-sm font-semibold flex items-center gap-2"
+      class="bg-emerald-500 text-nowrap text-white px-3 py-1 rounded-lg hover:bg-emerald-600 transition-all duration-200 text-sm cursor-pointer font-semibold flex items-center gap-2"
     >
-      <i class="pi pi-plus text-sm"></i>
+      <i class="pi pi-plus" style="font-size: 0.8rem"></i>
       <span>Nova Conversa</span>
     </button>
   </header>
