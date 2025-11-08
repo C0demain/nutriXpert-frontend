@@ -4,6 +4,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
 
     if(to.path !== '/login' && !useCookie('token').value){
-        return navigateTo('/login')
+        return navigateTo({path: '/login', query: {redirectUrl: from.path} })
     }
 })

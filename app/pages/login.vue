@@ -2,6 +2,8 @@
 import { Password, useToast } from 'primevue'
 import type { Role } from '~/types/Role'
 
+const route = useRoute()
+
 const email = ref("")
 const password = ref("")
 
@@ -79,7 +81,11 @@ async function handleFormSubmit(event: SubmitEvent) {
             life: 4000
         })
 
-        navigateTo('/chat')
+        let url = '/chat'
+        if(route.query.redirectUrl){
+            url = String(route.query.redirectUrl)
+        }
+        navigateTo(url)
     }
 }
 
