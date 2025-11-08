@@ -12,7 +12,7 @@
         <Column field="email" header="Email"></Column>
         <Column header="Ações" field="id">
             <template #body = {data}>
-                <NuxtLink :href="`/admin/users/${data.id}`" class="hover:text-primary">
+                <NuxtLink :href="`/admin/users/${data.id}/chat`" class="hover:text-primary">
                     <i class="pi pi-comments"></i>
                     Conversas
                 </NuxtLink>
