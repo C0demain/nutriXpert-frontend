@@ -29,5 +29,34 @@ export interface Goal {
   goalType: GoalTypeOps;
   targetWeight: number;
   targetCalories: number;
+  currentCalories?: number;
+  targetProtein?: number;
+  currentProtein?: number;
+  targetCarbs?: number;
+  currentCarbs?: number;
+  targetFats?: number;
+  currentFats?: number;
   foodRestrictions: string;
+}
+
+export interface GoalProgress {
+  id: number;
+  userId: string;
+  description: string;
+  goalType: GoalTypeOps;
+  weightProgress: number;
+  targetWeight: number;
+  currentWeight: number;
+  caloriesProgress: number;
+  targetCalories: number;
+  currentCalories: number;
+  proteinProgress: number;
+  targetProtein: number;
+  currentProtein: number;
+  carbsProgress: number;
+  targetCarbs: number;
+  currentCarbs: number;
+  fatsProgress: number;
+  targetFats: number;
+  currentFats: number;
 }
