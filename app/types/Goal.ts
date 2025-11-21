@@ -1,3 +1,38 @@
+export interface Goal {
+  id: number;
+  userId: string;
+  description: string;
+  goalType: GoalTypeOps;
+  targetWeight: number;
+  targetCalories: number;
+  targetProtein: number;
+  targetCarbs: number;
+  targetFats: number;
+  foodRestrictions: string;
+}
+
+export interface GoalProgress {
+  id: number;
+  userId: string;
+  description: string;
+  goalType: GoalTypeOps;
+  weightProgress: number;
+  targetWeight: number;
+  currentWeight: number;
+  caloriesProgressPercentage: number;
+  targetCalories: number;
+  currentCalories: number;
+  proteinProgressPercentage: number;
+  targetProtein: number;
+  currentProtein: number;
+  carbsProgressPercentage: number;
+  targetCarbs: number;
+  currentCarbs: number;
+  fatsProgressPercentage: number;
+  targetFats: number;
+  currentFats: number;
+}
+
 export type GoalTypeOps =
   | "Emagrecimento"
   | "Ganho de massa muscular"
@@ -29,14 +64,3 @@ export const metricTypes = [
   { label: "Carboidratos", name: "carbs", unit: "g", key: "targetCarbs" },
   { label: "Gorduras", name: "fats", unit: "g", key: "targetFats" },
 ];
-
-
-export interface Goal {
-  id: number;
-  userId: string;
-  description: string;
-  goalType: GoalTypeOps;
-  targetWeight: number;
-  targetCalories: number;
-  foodRestrictions: string;
-}
