@@ -34,9 +34,9 @@
           v-html="marked.parse(msg.text)"
         ></div>
 
-        <div v-if="msg.author === 'agent'" class="mt-2 flex items-center gap-2">
+        <div v-if="msg.author === 'assistant' || msg.author === 'agent'" class="mt-2 flex items-center gap-2">
           <!-- Estado: ainda não avaliado -->
-          <template v-if="!feedbacks[msg.id]">
+          <template v-if="msg.id && !feedbackStore.hasFeedback(msg.id)">
             <button
               @click="openFeedbackModal(msg)"
               class="flex items-center gap-2 px-3 py-1.5 border border-emerald-400 text-emerald-600 rounded-full text-sm font-medium
@@ -49,7 +49,7 @@
           </template>
 
           <!-- Estado: já avaliado -->
-          <template v-else>
+          <template v-else-if="msg.id && feedbackStore.hasFeedback(msg.id)">
             <button
               @click="openViewFeedbackModal(msg)"
               class="flex items-center gap-2 px-3 py-1.5 border border-green-400 bg-green-50 text-green-700 rounded-full text-sm font-medium hover:bg-green-100 active:scale-95 transition-all"
@@ -220,6 +220,7 @@ const schema = z.string().uuid();
 const toast = useToast();
 const chatStore = useChatStore();
 const authStore = useAuthStore();
+const feedbackStore = useFeedbackStore();
 
 interface Message {
   id: string;
@@ -238,24 +239,13 @@ const newMessage = ref("");
 const isTyping = ref(false);
 const chatWindow = ref<HTMLElement | null>(null);
 
-// --- Feedback ---
-const feedbacks = ref<Record<string, any>>({});
-onMounted(() => {
-  const stored = localStorage.getItem("sent_feedbacks");
-  if (stored) feedbacks.value = JSON.parse(stored);
-});
-
-watch(feedbacks, (newVal) => {
-  localStorage.setItem("sent_feedbacks", JSON.stringify(newVal));
-}, { deep: true });
-
 const feedbackModalVisible = ref(false);
 const viewFeedbackModalVisible = ref(false);
 const selectedMessage = ref<Message | null>(null);
 
 const feedbackData = ref({
   nota: 0,
-  atendeu_expectativas: "",
+  atendeu_expectativas: "" as string | boolean,
   comentario: "",
 });
 
@@ -271,7 +261,7 @@ const openFeedbackModal = (msg: Message) => {
 };
 
 const openViewFeedbackModal = (msg: Message) => {
-  const saved = feedbacks.value[msg.id];
+  const saved = feedbackStore.getFeedback(msg.id);
   if (saved) {
     viewedFeedbackData.value = saved;
     viewFeedbackModalVisible.value = true;
@@ -303,34 +293,49 @@ const submitFeedback = async () => {
     return;
   }
 
+  const messageId = selectedMessage.value.id || uuidv4();
+  
   const payload = {
     session_id: chatStore.selectedChatId,
-    message_id: selectedMessage.value.id || uuidv4(),
+    message_id: messageId,
     user_id: authStore.userId || "user_test",
     nota: feedbackData.value.nota,
     atendeu_expectativas: feedbackData.value.atendeu_expectativas,
     comentario: feedbackData.value.comentario,
   };
 
-  const { error } = await useAPI("/agent/feedback", { method: "POST", body: payload });
-
-  if (error.value) {
-    toast.add({
-      summary: "Erro ao enviar feedback",
-      detail: "Tente novamente mais tarde.",
-      severity: "error",
-      life: 4000,
+  try {
+    const { $api } = useNuxtApp();
+    
+    await $api("/agent/feedback", { 
+      method: "POST", 
+      body: payload 
     });
-  } else {
+
     toast.add({
       summary: "Feedback enviado!",
       detail: "Obrigado pela sua avaliação.",
       severity: "success",
       life: 4000,
     });
-    feedbacks.value[selectedMessage.value.id] = { ...feedbackData.value };
+    
+    // Salvar no Pinia store
+    feedbackStore.addFeedback(
+      messageId,
+      feedbackData.value.nota,
+      feedbackData.value.atendeu_expectativas === true,
+      feedbackData.value.comentario
+    );
+    
     feedbackModalVisible.value = false;
     feedbackData.value = { nota: 0, atendeu_expectativas: "", comentario: "" };
+  } catch (error) {
+    toast.add({
+      summary: "Erro ao enviar feedback",
+      detail: "Tente novamente mais tarde.",
+      severity: "error",
+      life: 4000,
+    });
   }
 };
 
@@ -355,7 +360,7 @@ const getMessages = async (chatId: string, userId?: string) => {
   }
 
   if (data.value) {
-    messages.value = data.value.messages ?? [];
+    messages.value = data.value.messages ?? [];  
     await nextTick();
     scrollToBottom();
   }
@@ -393,34 +398,46 @@ const sendMessage = async () => {
   newMessage.value = "";
   isTyping.value = true;
 
-  const { data, error } = await useAPI<{ answer: string }>("/agent/run-agent", {
-    method: "POST",
-    body: payload,
-  });
+  try {
+    const { $api } = useNuxtApp();
+    
+    const data = await $api<{ answer: string }>("/agent/run-agent", {
+      method: "POST",
+      body: payload,
+    });
 
-  isTyping.value = false;
+    isTyping.value = false;
 
-  if (error.value) {
+    if (data && data.answer) {
+      const agentMsg: Message = {
+        id: uuidv4(),
+        timestamp: Date.now(),
+        author: "agent",
+        role: "assistant",
+        text: data.answer,
+      };
+
+      messages.value.push(agentMsg);
+      scrollToBottom();
+    }
+  } catch (error: any) {
+    isTyping.value = false;
+    
+    let errorMessage = "Tente novamente mais tarde.";
+    
+    // Tratamento específico para erro 429 (Too Many Requests)
+    if (error?.status === 429 || error?.statusCode === 429) {
+      errorMessage = "Limite de requisições atingido. Aguarde alguns minutos antes de tentar novamente.";
+    } else if (error?.status === 500) {
+      errorMessage = "Erro no servidor. Por favor, tente novamente.";
+    }
+    
     toast.add({
       summary: "Erro ao enviar mensagem",
-      detail: "Tente novamente mais tarde.",
+      detail: errorMessage,
       severity: "error",
       life: 4000,
     });
-    return;
-  }
-
-  if (data.value) {
-    const agentMsg: Message = {
-      id: uuidv4(),
-      timestamp: Date.now(),
-      author: "agent",
-      role: "assistant",
-      text: data.value.answer,
-    };
-
-    messages.value.push(agentMsg);
-    scrollToBottom();
   }
 };
 
@@ -444,6 +461,11 @@ watch(
   { immediate: true }
 );
 
+onMounted(() => {
+  // Carregar feedbacks do localStorage ao montar o componente
+  feedbackStore.loadFromLocalStorage();
+  scrollToBottom();
+});
+
 onUpdated(scrollToBottom);
-onMounted(scrollToBottom);
 </script>
