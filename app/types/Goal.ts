@@ -22,6 +22,15 @@ export const goalTypeOpts = [
   { label: "Manutenção do peso", value: "Manutenção do peso" },
 ];
 
+export const metricTypes = [
+  { label: "Peso", name: "weight", unit: "Kg", key: "targetWeight" },
+  { label: "Calorias", name: "calories", unit: "Kcal", key: "targetCalories" },
+  { label: "Proteínas", name: "protein", unit: "g", key: "targetProtein" },
+  { label: "Carboidratos", name: "carbs", unit: "g", key: "targetCarbs" },
+  { label: "Gorduras", name: "fats", unit: "g", key: "targetFats" },
+];
+
+
 export interface Goal {
   id: number;
   userId: string;
