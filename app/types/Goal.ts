@@ -9,6 +9,8 @@ export interface Goal {
   targetCarbs: number;
   targetFats: number;
   foodRestrictions: string;
+  startDate: Date;
+  endDate: Date;
 }
 
 export interface GoalProgress {
@@ -31,6 +33,8 @@ export interface GoalProgress {
   fatsProgressPercentage: number;
   targetFats: number;
   currentFats: number;
+  startDate: Date;
+  endDate: Date;
 }
 
 export type GoalTypeOps =

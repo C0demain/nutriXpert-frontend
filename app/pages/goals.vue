@@ -119,12 +119,19 @@ async function deleteGoal(id: number) {
   </div>
 
   <div class="grid grid-cols-2 gap-6" v-else>
-    <Panel
-      :header="goal.description"
-      class="w-full flex"
-      v-for="goal in goals"
-      :key="goal.id"
-    >
+    <Panel class="w-full flex" v-for="goal in goals" :key="goal.id">
+      <template #header>
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-bold">{{ goal.description }}</span>
+        </div>
+      </template>
+      <template #icons>
+        <div class="flex flex-wrap items-center justify-end">
+          <span class="text-gray-500"
+            >Termina em: {{ new Date(goal.endDate).toLocaleDateString() }}</span
+          >
+        </div>
+      </template>
       <div class="flex flex-wrap gap-6 w-full">
         <div
           v-for="metric in getActiveMetrics(goal)"
@@ -136,8 +143,8 @@ async function deleteGoal(id: number) {
               : 'flex-1 min-w-[120px]'
           "
         >
-          <p class="text-md text-gray-600 mb-2">
-            Meta de {{ metric.label.toLowerCase() }}
+          <p class="text-md text-gray-600 mb-2 text-center wrap-normal">
+            {{ metric.label }}
           </p>
           <div class="flex items-baseline gap-1">
             <p class="text-5xl font-semibold text-emerald-600">
@@ -150,12 +157,11 @@ async function deleteGoal(id: number) {
               >{{ metric.progress }}{{ metric.unit }} para a meta</span
             >
             <span v-else class="text-lg text-gray-500"
-              >{{ metric.progress }}%</span
+              >{{ metric.progress.toFixed(2) }}%</span
             >
           </div>
         </div>
       </div>
-
       <template #footer>
         <div class="w-full flex justify-between items-center">
           <Badge class="mt-auto">{{ goal.goalType.toUpperCase() }}</Badge>

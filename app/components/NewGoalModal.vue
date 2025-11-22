@@ -8,6 +8,8 @@ const authStore = useAuthStore();
 
 const description = ref("");
 const goalType = ref<GoalTypeOps | null>(null);
+const startDate = ref<Date>(new Date());
+const endDate = ref<Date | null>(null);
 
 // Metas selecionadas pelo usuário
 const selectedMetrics = ref<
@@ -87,6 +89,35 @@ async function handleSubmit() {
     return;
   }
 
+  if (!startDate.value) {
+    toast.add({
+      severity: "warn",
+      summary: "Campo obrigatório",
+      detail: "Selecione uma date de início antes de continuar.",
+      life: 3000,
+    });
+    return;
+  }
+  if (!endDate.value) {
+    toast.add({
+      severity: "warn",
+      summary: "Campo obrigatório",
+      detail: "Selecione uma date de término antes de continuar.",
+      life: 3000,
+    });
+    return;
+  }
+
+  if (startDate.value > endDate.value) {
+    toast.add({
+      severity: "warn",
+      summary: "Formato inválido",
+      detail: "Data de início não pode ser maior do que data de término.",
+      life: 3000,
+    });
+    return;
+  }
+
   // Valida se todas as metas têm valores válidos
   const invalidMetrics = selectedMetrics.value.filter((m) => m.value <= 0);
   if (invalidMetrics.length > 0) {
@@ -109,6 +140,8 @@ async function handleSubmit() {
     targetCarbs: 0,
     targetFats: 0,
     foodRestrictions: "",
+    startDate: startDate.value,
+    endDate: endDate.value,
   };
 
   // Preenche apenas as metas selecionadas
@@ -149,6 +182,8 @@ async function handleSubmit() {
     description.value = "";
     goalType.value = null;
     selectedMetrics.value = [];
+    startDate.value = new Date();
+    endDate.value = null;
   }
 }
 </script>
@@ -163,7 +198,7 @@ async function handleSubmit() {
     <form class="flex flex-col gap-6" @submit.prevent="handleSubmit">
       <div class="flex flex-col gap-2">
         <label for="goalType">
-          Objetivo <span class="text-red-500">*</span>
+          Objetivo: <span class="text-red-500">*</span>
         </label>
         <Select
           v-model="goalType"
@@ -177,7 +212,7 @@ async function handleSubmit() {
 
       <div class="flex flex-col gap-2">
         <label for="description">
-          Descrição <span class="text-red-500">*</span>
+          Descrição: <span class="text-red-500">*</span>
         </label>
         <InputText
           v-model="description"
@@ -186,10 +221,43 @@ async function handleSubmit() {
         />
       </div>
 
+      <div class="flex flex-row gap-2">
+        <div class="flex flex-col flex-1 gap-2">
+          <label for="startDate">
+            Início: <span class="text-red-500">*</span>
+          </label>
+          <DatePicker
+            v-model="startDate"
+            id="starDate"
+            placeholder="Data de Início"
+            date-format="dd/mm/yy"
+            fluid
+            showIcon
+            iconDisplay="input"
+          >
+          </DatePicker>
+        </div>
+        <div class="flex flex-col flex-1 gap-2">
+          <label for="endDate">
+            Fim: <span class="text-red-500">*</span>
+          </label>
+          <DatePicker
+            v-model="endDate"
+            id="endDate"
+            placeholder="Data de Término"
+            date-format="dd/mm/yy"
+            fluid
+            showIcon
+            iconDisplay="input"
+            :min-date="startDate"
+          />
+        </div>
+      </div>
+
       <div class="flex flex-col gap-3">
         <div class="flex items-center justify-between">
           <label class="font-medium">
-            Metas <span class="text-red-500">*</span>
+            Metas: <span class="text-red-500">*</span>
           </label>
           <Button
             type="button"
