@@ -48,7 +48,7 @@ async function handleRegister(event: SubmitEvent) {
 </script>
 
 <template>
-    <div class="flex items-center justify-center min-h-screen bg-gray-50">
+    <div class="flex items-center justify-center min-h-screen bg-gray-50 bg-[url(~/assets/img/waves.svg)] bg-cover bg-center bg-no-repeat">
         <form
             class="flex flex-col gap-6 p-8 rounded-xl border border-gray-300 w-full max-w-lg mx-auto bg-white shadow-2xl min-h-[400px]"
             @submit.prevent="handleRegister">
