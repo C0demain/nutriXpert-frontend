@@ -9,8 +9,4 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if(!['/login', '/register', '/'].includes(to.path) && !token){
         return navigateTo({path: '/login', query: {redirectUrl: from.path}})
     }
-    
-    if(to.path.startsWith('/admin') && role !== 'ADMIN'){
-        return navigateTo('/chat')
-    }
 })
