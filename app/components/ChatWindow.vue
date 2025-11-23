@@ -17,32 +17,46 @@
 
     <!-- Chat ativo -->
     <main v-else ref="chatWindow" class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col">
-      <div v-for="msg in messages" :key="msg.id" :class="msg.author === 'user' ? 'items-end' : 'items-start'"
-        class="flex flex-col">
-        <div :class="[msg.author === 'user'
-          ? 'bg-emerald-500 text-white'
-          : 'bg-gray-200 text-gray-800 relative group',
-          'markdown-content']" class="px-3 py-2 rounded-md max-w-lg break-words" v-html="marked.parse(msg.text)">
-        </div>
+      <div
+        v-for="msg in messages"
+        :key="msg.id"
+        :class="msg.author === 'user' ? 'items-end' : 'items-start'"
+        class="flex flex-col"
+      >
+        <div
+          :class="[
+            msg.author === 'user'
+              ? 'bg-emerald-500 text-white'
+              : 'bg-gray-200 text-gray-800 relative group',
+            'markdown-content',
+          ]"
+          class="px-3 py-2 rounded-md max-w-lg break-words"
+          v-html="marked.parse(msg.text)"
+        ></div>
 
-        <div v-if="msg.author === 'agent'" class="mt-2 flex items-center gap-2">
+        <div v-if="msg.author === 'assistant' || msg.author === 'agent'" class="mt-2 flex items-center gap-2">
           <!-- Estado: ainda não avaliado -->
-          <template v-if="!feedbacks[msg.id]">
-            <button @click="openFeedbackModal(msg)" class="flex items-center gap-2 px-3 py-1.5 border border-emerald-400 text-emerald-600 rounded-full text-sm font-medium
-             hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-500
-             active:scale-95 transition-all duration-200">
+          <template v-if="msg.id && !feedbackStore.hasFeedback(msg.id)">
+            <button
+              @click="openFeedbackModal(msg)"
+              class="flex items-center gap-2 px-3 py-1.5 border border-emerald-400 text-emerald-600 rounded-full text-sm font-medium
+                hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-500
+                active:scale-95 transition-all duration-200"
+            >
               <i class="pi pi-comments text-emerald-500"></i>
               Avaliar resposta
             </button>
           </template>
 
           <!-- Estado: já avaliado -->
-          <template v-else>
-            <span
-              class="flex items-center gap-2 px-3 py-1.5 border border-green-400 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+          <template v-else-if="msg.id && feedbackStore.hasFeedback(msg.id)">
+            <button
+              @click="openViewFeedbackModal(msg)"
+              class="flex items-center gap-2 px-3 py-1.5 border border-green-400 bg-green-50 text-green-700 rounded-full text-sm font-medium hover:bg-green-100 active:scale-95 transition-all"
+            >
               <i class="pi pi-check-circle text-green-500"></i>
-              Avaliação enviada
-            </span>
+              Resposta avaliada
+            </button>
           </template>
         </div>
 
@@ -52,7 +66,7 @@
         </span>
       </div>
 
-      <!-- Modal de feedback -->
+      <!-- Modal de feedback (envio) -->
       <Dialog v-model:visible="feedbackModalVisible" modal header="Avaliar resposta" :closable="false"
         :style="{ width: '25rem' }">
         <div class="flex flex-col gap-3">
@@ -61,11 +75,17 @@
               Qualidade da resposta <span class="text-red-500">*</span>:
             </label>
             <div class="flex gap-1 items-center">
-              <span v-for="star in 5" :key="star" class="cursor-pointer text-2xl transition" :class="[
-                star <= feedbackData.nota
-                  ? 'text-yellow-400'
-                  : 'text-gray-300 hover:text-yellow-300',
-              ]" @click="setRating(star)">
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="cursor-pointer text-2xl transition"
+                :class="[
+                  star <= feedbackData.nota
+                    ? 'text-yellow-400'
+                    : 'text-gray-300 hover:text-yellow-300',
+                ]"
+                @click="setRating(star)"
+              >
                 ★
               </span>
               <span class="text-sm text-gray-500 ml-2">
@@ -78,8 +98,10 @@
             <label class="block text-sm text-gray-600 mb-1">
               Atendeu às expectativas? <span class="text-red-500">*</span>
             </label>
-            <select v-model="feedbackData.atendeu_expectativas"
-              class="w-full border border-gray-300 rounded-md px-2 py-1">
+            <select
+              v-model="feedbackData.atendeu_expectativas"
+              class="w-full border border-gray-300 rounded-md px-2 py-1"
+            >
               <option disabled value="">Selecione uma opção</option>
               <option :value="true">Sim</option>
               <option :value="false">Não</option>
@@ -90,15 +112,65 @@
             <label class="block text-sm text-gray-600 mb-1">
               Comentário (opcional):
             </label>
-            <textarea v-model="feedbackData.comentario" rows="3"
+            <textarea
+              v-model="feedbackData.comentario"
+              rows="3"
               class="w-full border border-gray-300 rounded-md px-2 py-1"
-              placeholder="Deixe seu comentário..."></textarea>
+              placeholder="Deixe seu comentário..."
+            ></textarea>
           </div>
 
           <div class="flex justify-end gap-2 mt-4">
             <Button label="Cancelar" class="p-button-text text-gray-500" @click="feedbackModalVisible = false" />
             <Button label="Enviar" class="bg-emerald-500 text-white hover:bg-emerald-600 transition"
               @click="submitFeedback" />
+          </div>
+        </div>
+      </Dialog>
+
+      <!-- Modal de visualização do feedback -->
+      <Dialog
+        v-model:visible="viewFeedbackModalVisible"
+        modal
+        header="Sua Avaliação"
+        :style="{ width: '25rem' }"
+      >
+        <div class="flex flex-col gap-3">
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Nota atribuída:</label>
+            <div class="flex gap-1 items-center">
+              <span
+                v-for="star in 5"
+                :key="star"
+                class="text-2xl"
+                :class="[
+                  star <= viewedFeedbackData.nota ? 'text-yellow-400' : 'text-gray-300',
+                ]"
+              >
+                ★
+              </span>
+              <span class="text-sm text-gray-500 ml-2">
+                {{ viewedFeedbackData.nota }} / 5
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Atendeu às expectativas:</label>
+            <p class="font-medium">
+              {{ viewedFeedbackData.atendeu_expectativas ? "Sim" : "Não" }}
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">Comentário:</label>
+            <p class="text-gray-700 whitespace-pre-line">
+              {{ viewedFeedbackData.comentario || "Nenhum comentário fornecido." }}
+            </p>
+          </div>
+
+          <div class="flex justify-end mt-4">
+            <Button label="Fechar" class="p-button-text text-gray-500" @click="viewFeedbackModalVisible = false" />
           </div>
         </div>
       </Dialog>
@@ -114,12 +186,24 @@
     </main>
 
     <!-- Campo de envio -->
-    <form v-if="chatStore.selectedChatId" @submit.prevent="sendMessage"
-      class="flex gap-3 p-4 bg-white border-t border-gray-200 shadow-lg">
-      <input v-model="newMessage" type="text" placeholder="Digite sua mensagem..."
-        class="flex-1 rounded-full px-3 py-2 border-2 border-gray-300 focus:outline-0 focus:border-emerald-300 bg-white text-gray-800 placeholder-gray-400 text-base transition-all" />
-      <Button icon="pi pi-arrow-up" type="submit" class="bg-emerald-500 text-white hover:bg-emerald-600 transition"
-        :disabled="!newMessage.trim()" rounded />
+    <form
+      v-if="chatStore.selectedChatId"
+      @submit.prevent="sendMessage"
+      class="flex gap-3 p-4 bg-white border-t border-gray-200 shadow-lg"
+    >
+      <input
+        v-model="newMessage"
+        type="text"
+        placeholder="Digite sua mensagem..."
+        class="flex-1 rounded-full px-3 py-2 border-2 border-gray-300 focus:outline-0 focus:border-emerald-300 bg-white text-gray-800 placeholder-gray-400 text-base transition-all"
+      />
+      <Button
+        icon="pi pi-arrow-up"
+        type="submit"
+        class="bg-emerald-500 text-white hover:bg-emerald-600 transition"
+        :disabled="!newMessage.trim()"
+        rounded
+      />
     </form>
   </div>
 </template>
@@ -136,6 +220,7 @@ const schema = z.string().uuid();
 const toast = useToast();
 const chatStore = useChatStore();
 const authStore = useAuthStore();
+const feedbackStore = useFeedbackStore();
 
 interface Message {
   id: string;
@@ -154,61 +239,37 @@ const newMessage = ref("");
 const isTyping = ref(false);
 const chatWindow = ref<HTMLElement | null>(null);
 
-// --- Feedback ---
-const feedbacks = ref<Record<string, boolean>>({});
-onMounted(() => {
-  const stored = localStorage.getItem("sent_feedbacks");
-  if (stored) feedbacks.value = JSON.parse(stored);
+const feedbackModalVisible = ref(false);
+const viewFeedbackModalVisible = ref(false);
+const selectedMessage = ref<Message | null>(null);
+
+const feedbackData = ref({
+  nota: 0,
+  atendeu_expectativas: "" as string | boolean,
+  comentario: "",
 });
 
-watch(feedbacks, (newVal) => {
-  localStorage.setItem("sent_feedbacks", JSON.stringify(newVal));
-}, { deep: true });
-
-const feedbackModalVisible = ref(false);
-const selectedMessage = ref<Message | null>(null);
-const feedbackData = ref({ nota: 0, atendeu_expectativas: "", comentario: "" });
+const viewedFeedbackData = ref({
+  nota: 0,
+  atendeu_expectativas: false,
+  comentario: "",
+});
 
 const openFeedbackModal = (msg: Message) => {
-  if (feedbacks.value[msg.id]) return;
   selectedMessage.value = msg;
   feedbackModalVisible.value = true;
 };
 
-const setRating = (rating: number) => (feedbackData.value.nota = rating);
-
-// --- Buscar mensagens ---
-const getMessages = async (chatId: string, userId?: string) => {
-  if (!userId) return navigateTo("/login");
-  if (!chatId) return;
-
-  const { data, error } = await useAPI<ChatSession>(
-    `/agent/sessions/${userId}/${chatId}`,
-    { method: "GET" }
-  );
-
-  if (error.value) {
-    if (error.value.statusCode === 404) {
-      messages.value = [];
-    } else {
-      toast.add({
-        summary: "Erro ao carregar mensagens",
-        detail: "Não foi possível carregar o histórico.",
-        severity: "error",
-        life: 4000,
-      });
-    }
-    return;
-  }
-
-  if (data.value) {
-    messages.value = data.value.messages ?? [];
-    await nextTick();
-    scrollToBottom();
+const openViewFeedbackModal = (msg: Message) => {
+  const saved = feedbackStore.getFeedback(msg.id);
+  if (saved) {
+    viewedFeedbackData.value = saved;
+    viewFeedbackModalVisible.value = true;
   }
 };
 
-// --- Enviar feedback ---
+const setRating = (rating: number) => (feedbackData.value.nota = rating);
+
 const submitFeedback = async () => {
   if (!selectedMessage.value) return;
 
@@ -232,37 +293,79 @@ const submitFeedback = async () => {
     return;
   }
 
+  const messageId = selectedMessage.value.id || uuidv4();
+  
   const payload = {
-    message_id: selectedMessage.value.id || uuidv4(),
+    session_id: chatStore.selectedChatId,
+    message_id: messageId,
     user_id: authStore.userId || "user_test",
     nota: feedbackData.value.nota,
     atendeu_expectativas: feedbackData.value.atendeu_expectativas,
     comentario: feedbackData.value.comentario,
   };
 
-  const { error } = await useAPI("/agent/feedback", { method: "POST", body: payload });
-
-  if (error.value) {
-    toast.add({
-      summary: "Erro ao enviar feedback",
-      detail: "Tente novamente mais tarde.",
-      severity: "error",
-      life: 4000,
+  try {
+    const { $api } = useNuxtApp();
+    
+    await $api("/agent/feedback", { 
+      method: "POST", 
+      body: payload 
     });
-  } else {
+
     toast.add({
       summary: "Feedback enviado!",
       detail: "Obrigado pela sua avaliação.",
       severity: "success",
       life: 4000,
     });
-    feedbacks.value[selectedMessage.value.id] = true;
+    
+    // Salvar no Pinia store
+    feedbackStore.addFeedback(
+      messageId,
+      feedbackData.value.nota,
+      feedbackData.value.atendeu_expectativas === true,
+      feedbackData.value.comentario
+    );
+    
     feedbackModalVisible.value = false;
     feedbackData.value = { nota: 0, atendeu_expectativas: "", comentario: "" };
+  } catch (error) {
+    toast.add({
+      summary: "Erro ao enviar feedback",
+      detail: "Tente novamente mais tarde.",
+      severity: "error",
+      life: 4000,
+    });
   }
 };
 
-// --- Enviar mensagem ---
+// --- Mensagens e sessão ---
+const getMessages = async (chatId: string, userId?: string) => {
+  if (!userId) return navigateTo("/login");
+  if (!chatId) return;
+
+  const { data, error } = await useAPI<ChatSession>(
+    `/agent/sessions/${userId}/${chatId}`,
+    { method: "GET" }
+  );
+
+  if (error.value) {
+    toast.add({
+      summary: "Erro ao carregar mensagens",
+      detail: "Não foi possível carregar o histórico.",
+      severity: "error",
+      life: 4000,
+    });
+    return;
+  }
+
+  if (data.value) {
+    messages.value = data.value.messages ?? [];  
+    await nextTick();
+    scrollToBottom();
+  }
+};
+
 const sendMessage = async () => {
   if (!newMessage.value.trim()) return;
 
@@ -289,44 +392,65 @@ const sendMessage = async () => {
     user_id: userId,
     session_id: sessionId,
     question: newMessage.value,
-    _ts: Date.now(), // evita cache
+    _ts: Date.now(),
   };
 
   newMessage.value = "";
   isTyping.value = true;
 
-  const { data, error } = await useAPI<{ answer: string }>("/agent/run-agent", {
-    method: "POST",
-    body: payload,
-  });
+  try {
+    const { $api } = useNuxtApp();
+    
+    const data = await $api<{ answer: string }>("/agent/run-agent", {
+      method: "POST",
+      body: payload,
+    });
 
-  isTyping.value = false;
+    isTyping.value = false;
 
-  if (error.value) {
+    if (data && data.answer) {
+      const agentMsg: Message = {
+        id: uuidv4(),
+        timestamp: Date.now(),
+        author: "agent",
+        role: "assistant",
+        text: data.answer,
+      };
+
+      messages.value.push(agentMsg);
+      scrollToBottom();
+    }
+  } catch (error: any) {
+    isTyping.value = false;
+    
+    let errorMessage = "Tente novamente mais tarde.";
+    
+    // Tratamento específico para erro 429 (Too Many Requests)
+    if (error?.status === 429 || error?.statusCode === 429) {
+      errorMessage = "Limite de requisições atingido. Aguarde alguns minutos antes de tentar novamente.";
+    } else if (error?.status === 500) {
+      errorMessage = "Erro no servidor. Por favor, tente novamente.";
+    }
+    
     toast.add({
       summary: "Erro ao enviar mensagem",
-      detail: "Tente novamente mais tarde.",
+      detail: errorMessage,
       severity: "error",
       life: 4000,
     });
-    return;
-  }
-
-  if (data.value) {
-    const agentMsg: Message = {
-      id: uuidv4(),
-      timestamp: Date.now(),
-      author: "agent",
-      role: "assistant",
-      text: data.value.answer,
-    };
-
-    messages.value.push(agentMsg);
-    scrollToBottom();
   }
 };
 
-// --- Watch sessão selecionada ---
+// --- Utilidades ---
+const timestampToDate = (timestamp: number) => new Date(timestamp * 1000);
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (chatWindow.value)
+      chatWindow.value.scrollTop = chatWindow.value.scrollHeight;
+  });
+};
+
 watch(
   () => chatStore.selectedChatId,
   (newId) => {
@@ -337,15 +461,11 @@ watch(
   { immediate: true }
 );
 
-const timestampToDate = (timestamp: number) => new Date(timestamp * 1000);
-
-const scrollToBottom = () => {
-  nextTick(() => {
-    if (chatWindow.value)
-      chatWindow.value.scrollTop = chatWindow.value.scrollHeight;
-  });
-};
+onMounted(() => {
+  // Carregar feedbacks do localStorage ao montar o componente
+  feedbackStore.loadFromLocalStorage();
+  scrollToBottom();
+});
 
 onUpdated(scrollToBottom);
-onMounted(scrollToBottom);
 </script>

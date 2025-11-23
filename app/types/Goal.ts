@@ -61,6 +61,44 @@ export const goalTypeOpts = [
   { label: "Manutenção do peso", value: "Manutenção do peso" },
 ];
 
+export interface Goal {
+  id: number;
+  userId: string;
+  description: string;
+  goalType: GoalTypeOps;
+  targetWeight: number;
+  targetCalories: number;
+  currentCalories?: number;
+  targetProtein?: number;
+  currentProtein?: number;
+  targetCarbs?: number;
+  currentCarbs?: number;
+  targetFats?: number;
+  currentFats?: number;
+  foodRestrictions: string;
+}
+
+export interface GoalProgress {
+  id: number;
+  userId: string;
+  description: string;
+  goalType: GoalTypeOps;
+  weightProgress: number;
+  targetWeight: number;
+  currentWeight: number;
+  caloriesProgress: number;
+  targetCalories: number;
+  currentCalories: number;
+  proteinProgress: number;
+  targetProtein: number;
+  currentProtein: number;
+  carbsProgress: number;
+  targetCarbs: number;
+  currentCarbs: number;
+  fatsProgress: number;
+  targetFats: number;
+  currentFats: number;
+}
 export const metricTypes = [
   { label: "Peso", name: "weight", unit: "Kg", key: "targetWeight" },
   { label: "Calorias", name: "calories", unit: "Kcal", key: "targetCalories" },
