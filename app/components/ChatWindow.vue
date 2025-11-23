@@ -17,32 +17,21 @@
 
     <!-- Chat ativo -->
     <main v-else ref="chatWindow" class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col">
-      <div
-        v-for="msg in messages"
-        :key="msg.id"
-        :class="msg.author === 'user' ? 'items-end' : 'items-start'"
-        class="flex flex-col"
-      >
-        <div
-          :class="[
-            msg.author === 'user'
-              ? 'bg-emerald-500 text-white'
-              : 'bg-gray-200 text-gray-800 relative group',
-            'markdown-content',
-          ]"
-          class="px-3 py-2 rounded-md max-w-lg break-words"
-          v-html="marked.parse(msg.text)"
-        ></div>
+      <div v-for="msg in messages" :key="msg.id" :class="msg.author === 'user' ? 'items-end' : 'items-start'"
+        class="flex flex-col">
+        <div :class="[
+          msg.author === 'user'
+            ? 'bg-emerald-500 text-white'
+            : 'bg-gray-200 text-gray-800 relative group',
+          'markdown-content',
+        ]" class="px-3 py-2 rounded-md max-w-lg break-words" v-html="marked.parse(msg.text)"></div>
 
         <div v-if="msg.author === 'assistant' || msg.author === 'agent'" class="mt-2 flex items-center gap-2">
           <!-- Estado: ainda não avaliado -->
           <template v-if="msg.id && !feedbackStore.hasFeedback(msg.id)">
-            <button
-              @click="openFeedbackModal(msg)"
-              class="flex items-center gap-2 px-3 py-1.5 border border-emerald-400 text-emerald-600 rounded-full text-sm font-medium
+            <button @click="openFeedbackModal(msg)" class="flex items-center gap-2 px-3 py-1.5 border border-emerald-400 text-emerald-600 rounded-full text-sm font-medium
                 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-500
-                active:scale-95 transition-all duration-200"
-            >
+                active:scale-95 transition-all duration-200">
               <i class="pi pi-comments text-emerald-500"></i>
               Avaliar resposta
             </button>
@@ -50,10 +39,8 @@
 
           <!-- Estado: já avaliado -->
           <template v-else-if="msg.id && feedbackStore.hasFeedback(msg.id)">
-            <button
-              @click="openViewFeedbackModal(msg)"
-              class="flex items-center gap-2 px-3 py-1.5 border border-green-400 bg-green-50 text-green-700 rounded-full text-sm font-medium hover:bg-green-100 active:scale-95 transition-all"
-            >
+            <button @click="openViewFeedbackModal(msg)"
+              class="flex items-center gap-2 px-3 py-1.5 border border-green-400 bg-green-50 text-green-700 rounded-full text-sm font-medium hover:bg-green-100 active:scale-95 transition-all">
               <i class="pi pi-check-circle text-green-500"></i>
               Resposta avaliada
             </button>
@@ -61,8 +48,8 @@
         </div>
 
         <span class="text-xs text-gray-400 mt-1">
-          {{ timestampToDate(msg.timestamp).toLocaleTimeString().substring(0, 5) }}
-          {{ timestampToDate(msg.timestamp).toLocaleDateString() }}
+          {{ formatDateTimeBR(msg.timestamp).time }}
+          {{ formatDateTimeBR(msg.timestamp).date }}
         </span>
       </div>
 
@@ -75,17 +62,11 @@
               Qualidade da resposta <span class="text-red-500">*</span>:
             </label>
             <div class="flex gap-1 items-center">
-              <span
-                v-for="star in 5"
-                :key="star"
-                class="cursor-pointer text-2xl transition"
-                :class="[
-                  star <= feedbackData.nota
-                    ? 'text-yellow-400'
-                    : 'text-gray-300 hover:text-yellow-300',
-                ]"
-                @click="setRating(star)"
-              >
+              <span v-for="star in 5" :key="star" class="cursor-pointer text-2xl transition" :class="[
+                star <= feedbackData.nota
+                  ? 'text-yellow-400'
+                  : 'text-gray-300 hover:text-yellow-300',
+              ]" @click="setRating(star)">
                 ★
               </span>
               <span class="text-sm text-gray-500 ml-2">
@@ -98,10 +79,8 @@
             <label class="block text-sm text-gray-600 mb-1">
               Atendeu às expectativas? <span class="text-red-500">*</span>
             </label>
-            <select
-              v-model="feedbackData.atendeu_expectativas"
-              class="w-full border border-gray-300 rounded-md px-2 py-1"
-            >
+            <select v-model="feedbackData.atendeu_expectativas"
+              class="w-full border border-gray-300 rounded-md px-2 py-1">
               <option disabled value="">Selecione uma opção</option>
               <option :value="true">Sim</option>
               <option :value="false">Não</option>
@@ -112,12 +91,9 @@
             <label class="block text-sm text-gray-600 mb-1">
               Comentário (opcional):
             </label>
-            <textarea
-              v-model="feedbackData.comentario"
-              rows="3"
+            <textarea v-model="feedbackData.comentario" rows="3"
               class="w-full border border-gray-300 rounded-md px-2 py-1"
-              placeholder="Deixe seu comentário..."
-            ></textarea>
+              placeholder="Deixe seu comentário..."></textarea>
           </div>
 
           <div class="flex justify-end gap-2 mt-4">
@@ -129,24 +105,14 @@
       </Dialog>
 
       <!-- Modal de visualização do feedback -->
-      <Dialog
-        v-model:visible="viewFeedbackModalVisible"
-        modal
-        header="Sua Avaliação"
-        :style="{ width: '25rem' }"
-      >
+      <Dialog v-model:visible="viewFeedbackModalVisible" modal header="Sua Avaliação" :style="{ width: '25rem' }">
         <div class="flex flex-col gap-3">
           <div>
             <label class="block text-sm text-gray-600 mb-1">Nota atribuída:</label>
             <div class="flex gap-1 items-center">
-              <span
-                v-for="star in 5"
-                :key="star"
-                class="text-2xl"
-                :class="[
-                  star <= viewedFeedbackData.nota ? 'text-yellow-400' : 'text-gray-300',
-                ]"
-              >
+              <span v-for="star in 5" :key="star" class="text-2xl" :class="[
+                star <= viewedFeedbackData.nota ? 'text-yellow-400' : 'text-gray-300',
+              ]">
                 ★
               </span>
               <span class="text-sm text-gray-500 ml-2">
@@ -186,24 +152,12 @@
     </main>
 
     <!-- Campo de envio -->
-    <form
-      v-if="chatStore.selectedChatId"
-      @submit.prevent="sendMessage"
-      class="flex gap-3 p-4 bg-white border-t border-gray-200 shadow-lg"
-    >
-      <input
-        v-model="newMessage"
-        type="text"
-        placeholder="Digite sua mensagem..."
-        class="flex-1 rounded-full px-3 py-2 border-2 border-gray-300 focus:outline-0 focus:border-emerald-300 bg-white text-gray-800 placeholder-gray-400 text-base transition-all"
-      />
-      <Button
-        icon="pi pi-arrow-up"
-        type="submit"
-        class="bg-emerald-500 text-white hover:bg-emerald-600 transition"
-        :disabled="!newMessage.trim()"
-        rounded
-      />
+    <form v-if="chatStore.selectedChatId" @submit.prevent="sendMessage"
+      class="flex gap-3 p-4 bg-white border-t border-gray-200 shadow-lg">
+      <input v-model="newMessage" type="text" placeholder="Digite sua mensagem..."
+        class="flex-1 rounded-full px-3 py-2 border-2 border-gray-300 focus:outline-0 focus:border-emerald-300 bg-white text-gray-800 placeholder-gray-400 text-base transition-all" />
+      <Button icon="pi pi-arrow-up" type="submit" class="bg-emerald-500 text-white hover:bg-emerald-600 transition"
+        :disabled="!newMessage.trim()" rounded />
     </form>
   </div>
 </template>
@@ -294,7 +248,7 @@ const submitFeedback = async () => {
   }
 
   const messageId = selectedMessage.value.id || uuidv4();
-  
+
   const payload = {
     session_id: chatStore.selectedChatId,
     message_id: messageId,
@@ -306,10 +260,10 @@ const submitFeedback = async () => {
 
   try {
     const { $api } = useNuxtApp();
-    
-    await $api("/agent/feedback", { 
-      method: "POST", 
-      body: payload 
+
+    await $api("/agent/feedback", {
+      method: "POST",
+      body: payload
     });
 
     toast.add({
@@ -318,7 +272,7 @@ const submitFeedback = async () => {
       severity: "success",
       life: 4000,
     });
-    
+
     // Salvar no Pinia store
     feedbackStore.addFeedback(
       messageId,
@@ -326,7 +280,7 @@ const submitFeedback = async () => {
       feedbackData.value.atendeu_expectativas === true,
       feedbackData.value.comentario
     );
-    
+
     feedbackModalVisible.value = false;
     feedbackData.value = { nota: 0, atendeu_expectativas: "", comentario: "" };
   } catch (error) {
@@ -360,7 +314,7 @@ const getMessages = async (chatId: string, userId?: string) => {
   }
 
   if (data.value) {
-    messages.value = data.value.messages ?? [];  
+    messages.value = data.value.messages ?? [];
     await nextTick();
     scrollToBottom();
   }
@@ -400,7 +354,7 @@ const sendMessage = async () => {
 
   try {
     const { $api } = useNuxtApp();
-    
+
     const data = await $api<{ answer: string }>("/agent/run-agent", {
       method: "POST",
       body: payload,
@@ -422,16 +376,16 @@ const sendMessage = async () => {
     }
   } catch (error: any) {
     isTyping.value = false;
-    
+
     let errorMessage = "Tente novamente mais tarde.";
-    
+
     // Tratamento específico para erro 429 (Too Many Requests)
     if (error?.status === 429 || error?.statusCode === 429) {
       errorMessage = "Limite de requisições atingido. Aguarde alguns minutos antes de tentar novamente.";
     } else if (error?.status === 500) {
       errorMessage = "Erro no servidor. Por favor, tente novamente.";
     }
-    
+
     toast.add({
       summary: "Erro ao enviar mensagem",
       detail: errorMessage,
@@ -442,7 +396,33 @@ const sendMessage = async () => {
 };
 
 // --- Utilidades ---
-const timestampToDate = (timestamp: number) => new Date(timestamp * 1000);
+const timestampToDate = (timestamp: number) => {
+  // se o timestamp > 10 dígitos: é milissegundos
+  if (timestamp > 9999999999) {
+    return new Date(timestamp); // já está em ms
+  }
+
+  // caso contrário é segundos
+  return new Date(timestamp * 1000);
+};
+
+
+const formatDateTimeBR = (timestamp: number) => {
+  const d = timestampToDate(timestamp);
+
+  return {
+    time: d.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    }),
+    date: d.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    })
+  };
+};
+
 
 const scrollToBottom = () => {
   nextTick(() => {
