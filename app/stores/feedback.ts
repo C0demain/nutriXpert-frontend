@@ -6,12 +6,9 @@ interface Feedback {
   comentario: string
 }
 
-const STORAGE_KEY = 'nutriXpert_feedbacks'
-
 export const useFeedbackStore = defineStore('feedback', {
   state: () => ({
-    feedbacks: {} as Record<string, Feedback>,
-    loadedSessions: [] as string[]
+    feedbacks: {} as Record<string, Feedback>
   }),
 
   getters: {
@@ -25,25 +22,6 @@ export const useFeedbackStore = defineStore('feedback', {
   },
 
   actions: {
-    loadFromLocalStorage() {
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        if (stored) {
-          try {
-            this.feedbacks = JSON.parse(stored)
-          } catch (e) {
-            console.error('Erro ao carregar feedbacks do localStorage:', e)
-          }
-        }
-      }
-    },
-
-    saveToLocalStorage() {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.feedbacks))
-      }
-    },
-
     async loadFeedbacksForSession(sessionId: string, userId: string) {
       try {
         const { $api } = useNuxtApp()
@@ -54,8 +32,6 @@ export const useFeedbackStore = defineStore('feedback', {
         )
 
         if (data && Array.isArray(data)) {
-          
-          
           data.forEach((feedback: any) => {
             if (feedback.message_id) {
               this.feedbacks[feedback.message_id] = {
@@ -65,14 +41,6 @@ export const useFeedbackStore = defineStore('feedback', {
               }
             }
           })
-
-          if (!this.loadedSessions.includes(sessionId)) {
-            this.loadedSessions.push(sessionId)
-          }
-
-
-          this.saveToLocalStorage()
-          
         }
       } catch (error) {
         console.error("Erro ao carregar feedbacks:", error)
@@ -85,23 +53,10 @@ export const useFeedbackStore = defineStore('feedback', {
         atendeu_expectativas,
         comentario
       }
-      this.saveToLocalStorage()
     },
 
-    clearSession(sessionId: string) {
-      const index = this.loadedSessions.indexOf(sessionId)
-      if (index > -1) {
-        this.loadedSessions.splice(index, 1)
-      }
-    },
-
-    clearAll() {
+    clearFeedbacks() {
       this.feedbacks = {}
-      this.loadedSessions = []
-      
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(STORAGE_KEY)
-      }
     }
   }
 })

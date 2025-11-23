@@ -28,7 +28,7 @@
 
         <div v-if="msg.author === 'assistant' || msg.author === 'agent'" class="mt-2 flex items-center gap-2">
           <!-- Estado: ainda não avaliado -->
-          <template v-if="msg.id && !feedbackStore.hasFeedback(msg.id)">
+          <template v-if="msg.id && !msg.id.startsWith('temp_') && !feedbackStore.hasFeedback(msg.id)">
             <button @click="openFeedbackModal(msg)" class="flex items-center gap-2 px-3 py-1.5 border border-emerald-400 text-emerald-600 rounded-full text-sm font-medium
                 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-500
                 active:scale-95 transition-all duration-200">
@@ -38,7 +38,7 @@
           </template>
 
           <!-- Estado: já avaliado -->
-          <template v-else-if="msg.id && feedbackStore.hasFeedback(msg.id)">
+          <template v-else-if="msg.id && !msg.id.startsWith('temp_') && feedbackStore.hasFeedback(msg.id)">
             <button @click="openViewFeedbackModal(msg)"
               class="flex items-center gap-2 px-3 py-1.5 border border-green-400 bg-green-50 text-green-700 rounded-full text-sm font-medium hover:bg-green-100 active:scale-95 transition-all">
               <i class="pi pi-check-circle text-green-500"></i>
@@ -294,29 +294,59 @@ const submitFeedback = async () => {
 };
 
 // --- Mensagens e sessão ---
-const getMessages = async (chatId: string, userId?: string) => {
+const getMessages = async (chatId: string, userId?: string, silent: boolean = false, useFetchApi: boolean = false) => {
   if (!userId) return navigateTo("/login");
   if (!chatId) return;
 
-  const { data, error } = await useAPI<ChatSession>(
-    `/agent/sessions/${userId}/${chatId}`,
-    { method: "GET" }
-  );
+  try {
+    let data: ChatSession;
 
-  if (error.value) {
-    toast.add({
-      summary: "Erro ao carregar mensagens",
-      detail: "Não foi possível carregar o histórico.",
-      severity: "error",
-      life: 4000,
-    });
-    return;
-  }
+    if (useFetchApi) {
+      // Usar $api para chamadas após o componente estar montado
+      const { $api } = useNuxtApp();
+      data = await $api<ChatSession>(
+        `/agent/sessions/${userId}/${chatId}`,
+        { method: "GET" }
+      );
+    } else {
+      // Usar useAPI para carregamento inicial
+      const response = await useAPI<ChatSession>(
+        `/agent/sessions/${userId}/${chatId}`,
+        { method: "GET" }
+      );
 
-  if (data.value) {
-    messages.value = data.value.messages ?? [];
+      if (response.error.value) {
+        if (!silent) {
+          toast.add({
+            summary: "Erro ao carregar mensagens",
+            detail: "Não foi possível carregar o histórico.",
+            severity: "error",
+            life: 4000,
+          });
+        }
+        return;
+      }
+
+      if (!response.data.value) return;
+      data = response.data.value;
+    }
+
+    messages.value = data.messages ?? [];
+    
+    // Carregar feedbacks da sessão sempre (mesmo em modo silent)
+    await feedbackStore.loadFeedbacksForSession(chatId, userId);
+    
     await nextTick();
     scrollToBottom();
+  } catch (error) {
+    if (!silent) {
+      toast.add({
+        summary: "Erro ao carregar mensagens",
+        detail: "Não foi possível carregar o histórico.",
+        severity: "error",
+        life: 4000,
+      });
+    }
   }
 };
 
@@ -363,8 +393,10 @@ const sendMessage = async () => {
     isTyping.value = false;
 
     if (data && data.answer) {
+      // Adicionar a resposta temporariamente para exibição imediata
+      const tempId = `temp_${uuidv4()}`;
       const agentMsg: Message = {
-        id: uuidv4(),
+        id: tempId,
         timestamp: Date.now(),
         author: "agent",
         role: "assistant",
@@ -373,6 +405,26 @@ const sendMessage = async () => {
 
       messages.value.push(agentMsg);
       scrollToBottom();
+
+      // Polling: tentar recarregar até conseguir o ID real (máximo 5 tentativas)
+      let attempts = 0;
+      const maxAttempts = 5;
+      const pollInterval = 1000; // 1 segundo entre tentativas
+
+      const pollMessages = async () => {
+        attempts++;
+        
+        await getMessages(sessionId, userId, true, true); // usar $api
+        
+        const stillHasTempId = messages.value.some(m => m.id.startsWith('temp_'));
+        
+        if (stillHasTempId && attempts < maxAttempts) {
+          setTimeout(pollMessages, pollInterval);
+        }
+      };
+
+      // Iniciar polling após 1 segundo
+      setTimeout(pollMessages, 1000);
     }
   } catch (error: any) {
     isTyping.value = false;
@@ -435,6 +487,7 @@ watch(
   () => chatStore.selectedChatId,
   (newId) => {
     messages.value = [];
+    feedbackStore.clearFeedbacks();
     const userId = authStore.userId;
     if (newId && userId) getMessages(newId, userId);
   },
@@ -442,8 +495,6 @@ watch(
 );
 
 onMounted(() => {
-  // Carregar feedbacks do localStorage ao montar o componente
-  feedbackStore.loadFromLocalStorage();
   scrollToBottom();
 });
 
