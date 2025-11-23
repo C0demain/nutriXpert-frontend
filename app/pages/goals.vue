@@ -101,12 +101,20 @@ async function deleteGoal(id: number) {
 
   <NewGoalModal v-model:visible="isModalVisible" />
 
-  <Button
-    class="my-6 px-6 py-2 bg-emerald-500 text-white hover:bg-emerald-600 transition rounded-md shadow-md"
-    icon="pi pi-plus"
-    label="Novo objetivo"
-    @click="isModalVisible = true"
-  />
+  <div class="flex gap-3 my-6">
+    <Button
+      class="px-6 py-2 bg-emerald-500 text-white hover:bg-emerald-600 transition rounded-md shadow-md"
+      icon="pi pi-plus"
+      label="Novo objetivo"
+      @click="isModalVisible = true"
+    />
+    <Button
+      class="px-6 py-2 bg-blue-500 text-white hover:bg-blue-600 transition rounded-md shadow-md"
+      icon="pi pi-chart-line"
+      label="Ver Progresso"
+      @click="$router.push('/progresso')"
+    />
+  </div>
 
   <ProgressSpinner v-if="pending" />
 
