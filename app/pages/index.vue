@@ -1,6 +1,6 @@
 <template @render>
-  <div class="min-h-screen flex flex-col justify-center items-center text-center">
-    <img src="~/assets/img/logotipo.png" alt="Logotipo" class="mb-6" />
+  <div class="min-h-screen flex flex-col justify-center items-center text-center bg-[url(~/assets/img/waves.svg)] bg-cover bg-center bg-no-repeat bg-fixed">
+    <img src="~/assets/img/logotipo.png" alt="Logotipo" class="max-w-xs md:max-w-md mx-auto drop-shadow-lg" />
 
     <p class="text-2xl font-semibold">Sua assistente IA nutricional</p>
     <p class="text-lg mb-8 text-gray-600">Clique em Criar conta para começar</p>

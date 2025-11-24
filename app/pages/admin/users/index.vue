@@ -7,17 +7,29 @@
                 <Button @click="() => refresh()">Atualizar</Button>
             </div>
         </template>
-        <Column field="id" header="Id" sortable></Column>
         <Column field="name" header="Nome" sortable></Column>
         <Column field="email" header="Email"></Column>
-        <Column header="Ações" field="id">
+        <Column header="Visualizar detalhes" field="id" :colspan="2">
             <template #body = {data}>
-                <NuxtLink :href="`/admin/users/${data.id}`" class="hover:text-primary">
-                    <i class="pi pi-comments"></i>
-                    Conversas
-                </NuxtLink>
+                <div class="space-x-10">
+                    <NuxtLink :href="`/admin/users/${data.id}/info`" class="hover:text-primary">
+                        <i class="pi pi-info-circle"></i>
+                        Detalhes
+                    </NuxtLink>
+                </div>
             </template>
         </Column>
+        <Column header="Visualizar conversas" field="id" :colspan="2">
+            <template #body = {data}>
+                <div class="space-x-10">
+                    <NuxtLink :href="`/admin/users/${data.id}/chat`" class="hover:text-primary">
+                        <i class="pi pi-comments"></i>
+                        Conversas
+                    </NuxtLink>
+                </div>
+            </template>
+        </Column>
+        
     </DataTable>
 </template>
 
